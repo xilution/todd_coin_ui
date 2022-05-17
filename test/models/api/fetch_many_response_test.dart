@@ -35,7 +35,9 @@ void main() {
       """));
 
     expect(manyResponse.meta.toString(), "{boo: $baz}");
-    expect(manyResponse.data[0].toString(), "{id: $id1, attributes: {foo: $bar1}}");
-    expect(manyResponse.data[1].toString(), "{id: $id2, attributes: {foo: $bar2}}");
+    expect(manyResponse.data[0].toString(),
+        "{id: $id1, attributes: {foo: $bar1}}");
+    expect(manyResponse.data[1].toString(),
+        "{id: $id2, attributes: {foo: $bar2}}");
   });
 }

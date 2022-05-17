@@ -2,7 +2,7 @@ import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 
 class RandomWords extends StatefulWidget {
-  const RandomWords({ Key? key }) : super(key: key);
+  const RandomWords({Key? key}) : super(key: key);
 
   @override
   _RandomWordsState createState() => _RandomWordsState();

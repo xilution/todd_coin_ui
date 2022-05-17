@@ -3,6 +3,5 @@ class FetchOneResponse {
 
   FetchOneResponse(this.data);
 
-  FetchOneResponse.fromJson(Map<String, dynamic> json)
-      : data = json['data'];
+  FetchOneResponse.fromJson(Map<String, dynamic> json) : data = json['data'];
 }

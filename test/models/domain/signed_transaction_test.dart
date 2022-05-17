@@ -70,7 +70,9 @@ void main() {
     """));
 
     expect(signedTransaction.id, "76c87a20-c10f-491b-b52b-2e643a5c4df1");
-    expect(signedTransaction.createdAt, DateTime.parse("2022-05-13T13:54:30.546Z"));
-    expect(signedTransaction.updatedAt, DateTime.parse("2022-05-14T02:30:22.003Z"));
+    expect(signedTransaction.createdAt,
+        DateTime.parse("2022-05-13T13:54:30.546Z"));
+    expect(signedTransaction.updatedAt,
+        DateTime.parse("2022-05-14T02:30:22.003Z"));
   });
 }

@@ -76,7 +76,9 @@ void main() {
     """));
 
     expect(blockTransaction.id, "f7c8db41-c982-4db6-97a2-b40b3bb94e34");
-    expect(blockTransaction.createdAt, DateTime.parse("2022-05-12T01:49:02.985Z"));
-    expect(blockTransaction.updatedAt, DateTime.parse("2022-05-12T02:49:03.051Z"));
+    expect(
+        blockTransaction.createdAt, DateTime.parse("2022-05-12T01:49:02.985Z"));
+    expect(
+        blockTransaction.updatedAt, DateTime.parse("2022-05-12T02:49:03.051Z"));
   });
 }

@@ -41,7 +41,9 @@ void main() {
     expect(block.updatedAt, DateTime.parse("2022-05-12T02:49:03.046Z"));
     expect(block.sequenceId, 0);
     expect(block.nonce, 1);
-    expect(block.previousHash, "0000000000000000000000000000000000000000000000000000000000000000");
-    expect(block.hash, "292e149e0e07ad88d46910a8a17e55b5857fe9f57d2781249ecfb39d7e333f04");
+    expect(block.previousHash,
+        "0000000000000000000000000000000000000000000000000000000000000000");
+    expect(block.hash,
+        "292e149e0e07ad88d46910a8a17e55b5857fe9f57d2781249ecfb39d7e333f04");
   });
 }

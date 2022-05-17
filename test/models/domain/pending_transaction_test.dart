@@ -50,7 +50,9 @@ void main() {
     """));
 
     expect(pendingTransaction.id, "22816bc4-f68e-44ec-9f0b-628114956f0f");
-    expect(pendingTransaction.createdAt, DateTime.parse("2022-05-12T01:49:03.055Z"));
-    expect(pendingTransaction.updatedAt, DateTime.parse("2022-05-13T01:49:03.055Z"));
+    expect(pendingTransaction.createdAt,
+        DateTime.parse("2022-05-12T01:49:03.055Z"));
+    expect(pendingTransaction.updatedAt,
+        DateTime.parse("2022-05-13T01:49:03.055Z"));
   });
 }

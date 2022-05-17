@@ -38,7 +38,9 @@ void main() {
     """));
 
     expect(participantKey.id, "90dc2ec6-b1c0-4bbb-9a3f-86343846f10e");
-    expect(participantKey.createdAt, DateTime.parse("2022-05-10T02:55:07.219Z"));
-    expect(participantKey.updatedAt, DateTime.parse("2022-05-10T02:57:07.219Z"));
+    expect(
+        participantKey.createdAt, DateTime.parse("2022-05-10T02:55:07.219Z"));
+    expect(
+        participantKey.updatedAt, DateTime.parse("2022-05-10T02:57:07.219Z"));
   });
 }
