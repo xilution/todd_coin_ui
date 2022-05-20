@@ -10,5 +10,6 @@ class BlockTransaction {
         createdAt = DateTime.parse(json['attributes']['createdAt']),
         updatedAt = DateTime.parse(json['attributes']['updatedAt']);
 
-  Map<String, dynamic> toJson() => {'id': id, 'attributes': {}};
+  Map<String, dynamic> toJson() =>
+      {'type': 'block-transaction', 'id': id, 'attributes': {}};
 }

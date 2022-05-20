@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:mockito/mockito.dart';
 import 'package:random_string/random_string.dart';
 import 'package:test/test.dart';
 import 'package:todd_coin_ui/brokers/node_broker.dart';
+import 'package:todd_coin_ui/models/api/create_or_update_one_request.dart';
 import 'package:todd_coin_ui/models/api/paginated_data.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/annotations.dart';
@@ -17,13 +20,17 @@ void main() {
       final client = MockClient();
 
       const String baseUrl = 'http://localhost:3000';
+      final String accessToken = randomAlpha(10);
       final int pageNumber = randomBetween(0, 10);
       final int pageSize = randomBetween(0, 10);
-      final NodeBroker nodeBroker = NodeBroker(client, baseUrl);
+      final NodeBroker nodeBroker = NodeBroker(client, baseUrl, accessToken);
 
-      when(client.get(Uri.parse(
-              '$baseUrl/nodes?page[number]=$pageNumber&page[size]=$pageSize')))
-          .thenAnswer((_) async => http.Response("""
+      when(client.get(
+          Uri.parse(
+              '$baseUrl/nodes?page[number]=$pageNumber&page[size]=$pageSize'),
+          headers: <String, String>{
+            'authentication': accessToken,
+          })).thenAnswer((_) async => http.Response("""
           {
             "jsonapi": {
               "version": "1.0"
@@ -79,11 +86,14 @@ void main() {
       final client = MockClient();
 
       const String baseUrl = 'http://localhost:3000';
+      final String accessToken = randomAlpha(10);
       final String nodeId = randomAlpha(32);
-      final NodeBroker nodeBroker = NodeBroker(client, baseUrl);
+      final NodeBroker nodeBroker = NodeBroker(client, baseUrl, accessToken);
 
-      when(client.get(Uri.parse('$baseUrl/nodes/$nodeId')))
-          .thenAnswer((_) async => http.Response("""
+      when(client
+          .get(Uri.parse('$baseUrl/nodes/$nodeId'), headers: <String, String>{
+        'authentication': accessToken,
+      })).thenAnswer((_) async => http.Response("""
           {
             "jsonapi": {
               "version": "1.0"
@@ -112,6 +122,100 @@ void main() {
       expect(node.createdAt, DateTime.parse("2022-05-12T01:53:29.970Z"));
       expect(node.updatedAt, DateTime.parse("2022-05-12T01:55:29.970Z"));
       expect(node.baseUrl, "https://example.com/todd-coin");
+    });
+  });
+
+  group('createNode', () {
+    test('returns a node if the http call completes successfully', () async {
+      final client = MockClient();
+
+      const String baseUrl = 'http://localhost:3000';
+      final String accessToken = randomAlpha(10);
+      final String id = randomAlpha(10);
+      final DateTime createdAt = DateTime.parse("2022-05-12T01:53:29.970Z");
+      final DateTime updatedAt = DateTime.parse("2022-05-12T01:54:29.970Z");
+      final Node newNode = Node(id, createdAt, updatedAt, baseUrl);
+      final NodeBroker nodeBroker = NodeBroker(client, baseUrl, accessToken);
+
+      when(client.post(Uri.parse('$baseUrl/nodes'),
+              headers: <String, String>{
+                'authentication': accessToken,
+              },
+              body: json.encode(CreateOrUpdateOneRequest(newNode.toJson()))))
+          .thenAnswer((_) async => http.Response("""
+          {
+            "jsonapi": {
+              "version": "1.0"
+            },
+            "links": {
+              "self": "http://localhost:3000/nodes/0b964c17-20ba-40d8-a993-4ae8a9a4d21b"
+            },
+            "data": {
+              "type": "node",
+              "id": "$id",
+              "links": {
+                "self": "http://localhost:3000/nodes/0b964c17-20ba-40d8-a993-4ae8a9a4d21b"
+              },
+              "attributes": {
+                "createdAt": "${createdAt.toIso8601String()}",
+                "updatedAt": "${updatedAt.toIso8601String()}",
+                "baseUrl": "$baseUrl"
+              }
+            }
+          }
+          """, 200));
+
+      Node createdNode = await nodeBroker.createNode(newNode);
+
+      expect(createdNode.id, id);
+      expect(createdNode.createdAt, createdAt);
+      expect(createdNode.updatedAt, updatedAt);
+      expect(createdNode.baseUrl, baseUrl);
+    });
+  });
+
+  group('updateNode', () {
+    test('returns void if the http call completes successfully', () async {
+      final client = MockClient();
+
+      const String baseUrl = 'http://localhost:3000';
+      final String accessToken = randomAlpha(10);
+      final String id = randomAlpha(10);
+      final DateTime createdAt = DateTime.parse("2022-05-12T01:53:29.970Z");
+      final DateTime updatedAt = DateTime.parse("2022-05-12T01:54:29.970Z");
+      final Node updatedNode = Node(id, createdAt, updatedAt, baseUrl);
+      final NodeBroker nodeBroker = NodeBroker(client, baseUrl, accessToken);
+
+      when(client.patch(Uri.parse('$baseUrl/nodes/${updatedNode.id}'),
+              headers: <String, String>{
+                'authentication': accessToken,
+              },
+              body:
+                  json.encode(CreateOrUpdateOneRequest(updatedNode.toJson()))))
+          .thenAnswer((_) async => http.Response("""
+          {
+            "jsonapi": {
+              "version": "1.0"
+            },
+            "links": {
+              "self": "http://localhost:3000/nodes/0b964c17-20ba-40d8-a993-4ae8a9a4d21b"
+            },
+            "data": {
+              "type": "node",
+              "id": "$id",
+              "links": {
+                "self": "http://localhost:3000/nodes/0b964c17-20ba-40d8-a993-4ae8a9a4d21b"
+              },
+              "attributes": {
+                "createdAt": "${createdAt.toIso8601String()}",
+                "updatedAt": "${updatedAt.toIso8601String()}",
+                "baseUrl": "$baseUrl"
+              }
+            }
+          }
+          """, 200));
+
+      await nodeBroker.updateNode(updatedNode);
     });
   });
 }

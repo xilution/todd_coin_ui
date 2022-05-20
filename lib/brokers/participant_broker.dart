@@ -6,80 +6,80 @@ import 'package:todd_coin_ui/models/api/fetch_many_response.dart';
 import 'package:todd_coin_ui/models/api/fetch_one_response.dart';
 import 'package:todd_coin_ui/models/api/meta.dart';
 import 'package:todd_coin_ui/models/api/paginated_data.dart';
-import 'package:todd_coin_ui/models/domain/node.dart';
+import 'package:todd_coin_ui/models/domain/participant.dart';
 
-class NodeBroker {
+class ParticipantBroker {
   final http.Client client;
   final String baseUrl;
   final String accessToken;
 
-  NodeBroker(this.client, this.baseUrl, this.accessToken);
+  ParticipantBroker(this.client, this.baseUrl, this.accessToken);
 
-  Future<PaginatedData<Node>> fetchNodes(int pageNumber, int pageSize) async {
+  Future<PaginatedData<Participant>> fetchParticipants(int pageNumber, int pageSize) async {
     final response = await client.get(
         Uri.parse(
-            '$baseUrl/nodes?page[number]=$pageNumber&page[size]=$pageSize'));
+            '$baseUrl/participants?page[number]=$pageNumber&page[size]=$pageSize'));
 
     if (response.statusCode == 200) {
       FetchManyResponse fetchManyResponse =
           FetchManyResponse.fromJson(json.decode(response.body));
       Meta meta = Meta.fromJson(fetchManyResponse.meta);
-      List<Node> nodes =
-          (fetchManyResponse.data).map((i) => Node.fromJson(i)).toList();
+      List<Participant> participants =
+          (fetchManyResponse.data).map((i) => Participant.fromJson(i)).toList();
 
       return PaginatedData(meta.itemsPerPage, meta.totalItems, meta.currentPage,
-          meta.totalPages, nodes);
+          meta.totalPages, participants);
     } else {
-      throw Exception('Failed to fetch nodes');
+      throw Exception('Failed to fetch participants');
     }
   }
 
-  Future<Node> fetchNode(String nodeId) async {
+  Future<Participant> fetchParticipant(String participantId) async {
     final response = await client
-        .get(Uri.parse('$baseUrl/nodes/$nodeId'));
+        .get(Uri.parse('$baseUrl/participants/$participantId'));
 
     if (response.statusCode == 200) {
       FetchOneResponse fetchOneResponse =
           FetchOneResponse.fromJson(json.decode(response.body));
 
-      return Node.fromJson(fetchOneResponse.data);
+      return Participant.fromJson(fetchOneResponse.data);
     } else {
-      throw Exception('Failed to fetch a node');
+      throw Exception('Failed to fetch a participant');
     }
   }
 
-  Future<Node> createNode(Node newNode) async {
+  Future<Participant> createParticipant(Participant newParticipant) async {
     final response = await client.post(
-      Uri.parse('$baseUrl/nodes'),
+      Uri.parse('$baseUrl/participants'),
       headers: <String, String>{
         'authentication': accessToken,
       },
-      body: json.encode(CreateOrUpdateOneRequest(newNode.toJson())),
+      body: json.encode(CreateOrUpdateOneRequest(newParticipant.toJson())),
     );
 
     if (response.statusCode == 200) {
       FetchOneResponse fetchOneResponse =
           FetchOneResponse.fromJson(json.decode(response.body));
 
-      return Node.fromJson(fetchOneResponse.data);
+      return Participant.fromJson(fetchOneResponse.data);
     } else {
-      throw Exception('Failed to create a node');
+      throw Exception('Failed to create a participant');
     }
   }
 
-  Future<void> updateNode(Node updatedNode) async {
+  Future<void> updateParticipant(Participant updatedParticipant) async {
     final response = await client.patch(
-      Uri.parse('$baseUrl/nodes/${updatedNode.id}'),
+      Uri.parse('$baseUrl/participants/${updatedParticipant.id}'),
       headers: <String, String>{
         'authentication': accessToken,
       },
-      body: json.encode(CreateOrUpdateOneRequest(updatedNode.toJson())),
+      body: json.encode(CreateOrUpdateOneRequest(updatedParticipant.toJson())),
     );
 
     if (response.statusCode == 200) {
       return;
     } else {
-      throw Exception('Failed to update a node');
+      throw Exception('Failed to update a participant');
     }
   }
 }

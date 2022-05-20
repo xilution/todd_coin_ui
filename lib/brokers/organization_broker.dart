@@ -6,80 +6,80 @@ import 'package:todd_coin_ui/models/api/fetch_many_response.dart';
 import 'package:todd_coin_ui/models/api/fetch_one_response.dart';
 import 'package:todd_coin_ui/models/api/meta.dart';
 import 'package:todd_coin_ui/models/api/paginated_data.dart';
-import 'package:todd_coin_ui/models/domain/node.dart';
+import 'package:todd_coin_ui/models/domain/organization.dart';
 
-class NodeBroker {
+class OrganizationBroker {
   final http.Client client;
   final String baseUrl;
   final String accessToken;
 
-  NodeBroker(this.client, this.baseUrl, this.accessToken);
+  OrganizationBroker(this.client, this.baseUrl, this.accessToken);
 
-  Future<PaginatedData<Node>> fetchNodes(int pageNumber, int pageSize) async {
+  Future<PaginatedData<Organization>> fetchOrganizations(int pageNumber, int pageSize) async {
     final response = await client.get(
         Uri.parse(
-            '$baseUrl/nodes?page[number]=$pageNumber&page[size]=$pageSize'));
+            '$baseUrl/organizations?page[number]=$pageNumber&page[size]=$pageSize'));
 
     if (response.statusCode == 200) {
       FetchManyResponse fetchManyResponse =
           FetchManyResponse.fromJson(json.decode(response.body));
       Meta meta = Meta.fromJson(fetchManyResponse.meta);
-      List<Node> nodes =
-          (fetchManyResponse.data).map((i) => Node.fromJson(i)).toList();
+      List<Organization> organizations =
+          (fetchManyResponse.data).map((i) => Organization.fromJson(i)).toList();
 
       return PaginatedData(meta.itemsPerPage, meta.totalItems, meta.currentPage,
-          meta.totalPages, nodes);
+          meta.totalPages, organizations);
     } else {
-      throw Exception('Failed to fetch nodes');
+      throw Exception('Failed to fetch organizations');
     }
   }
 
-  Future<Node> fetchNode(String nodeId) async {
+  Future<Organization> fetchOrganization(String organizationId) async {
     final response = await client
-        .get(Uri.parse('$baseUrl/nodes/$nodeId'));
+        .get(Uri.parse('$baseUrl/organizations/$organizationId'));
 
     if (response.statusCode == 200) {
       FetchOneResponse fetchOneResponse =
           FetchOneResponse.fromJson(json.decode(response.body));
 
-      return Node.fromJson(fetchOneResponse.data);
+      return Organization.fromJson(fetchOneResponse.data);
     } else {
-      throw Exception('Failed to fetch a node');
+      throw Exception('Failed to fetch a organization');
     }
   }
 
-  Future<Node> createNode(Node newNode) async {
+  Future<Organization> createOrganization(Organization newOrganization) async {
     final response = await client.post(
-      Uri.parse('$baseUrl/nodes'),
+      Uri.parse('$baseUrl/organizations'),
       headers: <String, String>{
         'authentication': accessToken,
       },
-      body: json.encode(CreateOrUpdateOneRequest(newNode.toJson())),
+      body: json.encode(CreateOrUpdateOneRequest(newOrganization.toJson())),
     );
 
     if (response.statusCode == 200) {
       FetchOneResponse fetchOneResponse =
           FetchOneResponse.fromJson(json.decode(response.body));
 
-      return Node.fromJson(fetchOneResponse.data);
+      return Organization.fromJson(fetchOneResponse.data);
     } else {
-      throw Exception('Failed to create a node');
+      throw Exception('Failed to create a organization');
     }
   }
 
-  Future<void> updateNode(Node updatedNode) async {
+  Future<void> updateOrganization(Organization updatedOrganization) async {
     final response = await client.patch(
-      Uri.parse('$baseUrl/nodes/${updatedNode.id}'),
+      Uri.parse('$baseUrl/organizations/${updatedOrganization.id}'),
       headers: <String, String>{
         'authentication': accessToken,
       },
-      body: json.encode(CreateOrUpdateOneRequest(updatedNode.toJson())),
+      body: json.encode(CreateOrUpdateOneRequest(updatedOrganization.toJson())),
     );
 
     if (response.statusCode == 200) {
       return;
     } else {
-      throw Exception('Failed to update a node');
+      throw Exception('Failed to update a organization');
     }
   }
 }

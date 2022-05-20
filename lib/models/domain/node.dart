@@ -13,6 +13,7 @@ class Node {
         baseUrl = json['attributes']['baseUrl'];
 
   Map<String, dynamic> toJson() => {
+        'type': 'node',
         'id': id,
         'attributes': {
           'baseUrl': baseUrl,

@@ -19,5 +19,6 @@ class Block {
         previousHash = json['attributes']['previousHash'],
         hash = json['attributes']['hash'];
 
-  Map<String, dynamic> toJson() => {'id': id, 'attributes': {}};
+  Map<String, dynamic> toJson() =>
+      {'type': 'block', 'id': id, 'attributes': {}};
 }

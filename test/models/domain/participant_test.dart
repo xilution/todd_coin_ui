@@ -49,5 +49,10 @@ void main() {
     expect(participant.id, "a7dd88da-f3bd-4f02-b50e-d9938bc1355c");
     expect(participant.createdAt, DateTime.parse("2022-05-13T13:27:31.789Z"));
     expect(participant.updatedAt, DateTime.parse("2022-05-14T13:27:31.789Z"));
+    expect(participant.email, "educator@example.com");
+    expect(participant.firstName, null);
+    expect(participant.lastName, null);
+    expect(participant.phone, null);
+    expect(participant.roles, ["VOLUNTEER"]);
   });
 }
