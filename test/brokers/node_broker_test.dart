@@ -29,7 +29,7 @@ void main() {
           Uri.parse(
               '$baseUrl/nodes?page[number]=$pageNumber&page[size]=$pageSize'),
           headers: <String, String>{
-            'authentication': accessToken,
+            'authorization': 'Bearer $accessToken',
           })).thenAnswer((_) async => http.Response("""
           {
             "jsonapi": {
@@ -92,7 +92,7 @@ void main() {
 
       when(client
           .get(Uri.parse('$baseUrl/nodes/$nodeId'), headers: <String, String>{
-        'authentication': accessToken,
+        'authorization': 'Bearer $accessToken',
       })).thenAnswer((_) async => http.Response("""
           {
             "jsonapi": {
@@ -134,12 +134,17 @@ void main() {
       final String id = randomAlpha(10);
       final DateTime createdAt = DateTime.parse("2022-05-12T01:53:29.970Z");
       final DateTime updatedAt = DateTime.parse("2022-05-12T01:54:29.970Z");
-      final Node newNode = Node(id, createdAt, updatedAt, baseUrl);
+      final Node newNode = Node(
+        id: id,
+        createdAt: createdAt,
+        updatedAt: updatedAt,
+        baseUrl: baseUrl
+      );
       final NodeBroker nodeBroker = NodeBroker(client, baseUrl, accessToken);
 
       when(client.post(Uri.parse('$baseUrl/nodes'),
               headers: <String, String>{
-                'authentication': accessToken,
+                'authorization': 'Bearer $accessToken',
               },
               body: json.encode(CreateOrUpdateOneRequest(newNode.toJson()))))
           .thenAnswer((_) async => http.Response("""
@@ -183,12 +188,17 @@ void main() {
       final String id = randomAlpha(10);
       final DateTime createdAt = DateTime.parse("2022-05-12T01:53:29.970Z");
       final DateTime updatedAt = DateTime.parse("2022-05-12T01:54:29.970Z");
-      final Node updatedNode = Node(id, createdAt, updatedAt, baseUrl);
+      final Node updatedNode = Node(
+          id: id,
+          createdAt: createdAt,
+          updatedAt: updatedAt,
+          baseUrl: baseUrl
+      );
       final NodeBroker nodeBroker = NodeBroker(client, baseUrl, accessToken);
 
       when(client.patch(Uri.parse('$baseUrl/nodes/${updatedNode.id}'),
               headers: <String, String>{
-                'authentication': accessToken,
+                'authorization': 'Bearer $accessToken',
               },
               body:
                   json.encode(CreateOrUpdateOneRequest(updatedNode.toJson()))))

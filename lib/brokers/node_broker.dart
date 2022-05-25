@@ -18,7 +18,10 @@ class NodeBroker {
   Future<PaginatedData<Node>> fetchNodes(int pageNumber, int pageSize) async {
     final response = await client.get(
         Uri.parse(
-            '$baseUrl/nodes?page[number]=$pageNumber&page[size]=$pageSize'));
+            '$baseUrl/nodes?page[number]=$pageNumber&page[size]=$pageSize'),
+        headers: <String, String>{
+          'content-type': 'application/json',
+        });
 
     if (response.statusCode == 200) {
       FetchManyResponse fetchManyResponse =
@@ -36,7 +39,9 @@ class NodeBroker {
 
   Future<Node> fetchNode(String nodeId) async {
     final response = await client
-        .get(Uri.parse('$baseUrl/nodes/$nodeId'));
+        .get(Uri.parse('$baseUrl/nodes/$nodeId'), headers: <String, String>{
+      'content-type': 'application/json',
+    });
 
     if (response.statusCode == 200) {
       FetchOneResponse fetchOneResponse =
@@ -52,7 +57,8 @@ class NodeBroker {
     final response = await client.post(
       Uri.parse('$baseUrl/nodes'),
       headers: <String, String>{
-        'authentication': accessToken,
+        'content-type': 'application/json',
+        'authorization': 'Bearer $accessToken',
       },
       body: json.encode(CreateOrUpdateOneRequest(newNode.toJson())),
     );
@@ -71,7 +77,8 @@ class NodeBroker {
     final response = await client.patch(
       Uri.parse('$baseUrl/nodes/${updatedNode.id}'),
       headers: <String, String>{
-        'authentication': accessToken,
+        'content-type': 'application/json',
+        'authorization': 'Bearer $accessToken',
       },
       body: json.encode(CreateOrUpdateOneRequest(updatedNode.toJson())),
     );

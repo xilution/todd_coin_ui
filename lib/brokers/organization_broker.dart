@@ -7,6 +7,7 @@ import 'package:todd_coin_ui/models/api/fetch_one_response.dart';
 import 'package:todd_coin_ui/models/api/meta.dart';
 import 'package:todd_coin_ui/models/api/paginated_data.dart';
 import 'package:todd_coin_ui/models/domain/organization.dart';
+import 'package:todd_coin_ui/models/domain/participant.dart';
 
 class OrganizationBroker {
   final http.Client client;
@@ -15,17 +16,46 @@ class OrganizationBroker {
 
   OrganizationBroker(this.client, this.baseUrl, this.accessToken);
 
-  Future<PaginatedData<Organization>> fetchOrganizations(int pageNumber, int pageSize) async {
+  Future<PaginatedData<Organization>> fetchOrganizations(
+      int pageNumber, int pageSize) async {
     final response = await client.get(
         Uri.parse(
-            '$baseUrl/organizations?page[number]=$pageNumber&page[size]=$pageSize'));
+            '$baseUrl/organizations?page[number]=$pageNumber&page[size]=$pageSize'),
+        headers: <String, String>{
+          'content-type': 'application/json',
+        });
 
     if (response.statusCode == 200) {
       FetchManyResponse fetchManyResponse =
           FetchManyResponse.fromJson(json.decode(response.body));
       Meta meta = Meta.fromJson(fetchManyResponse.meta);
-      List<Organization> organizations =
-          (fetchManyResponse.data).map((i) => Organization.fromJson(i)).toList();
+      List<Organization> organizations = (fetchManyResponse.data)
+          .map((i) => Organization.fromJson(i))
+          .toList();
+
+      return PaginatedData(meta.itemsPerPage, meta.totalItems, meta.currentPage,
+          meta.totalPages, organizations);
+    } else {
+      throw Exception('Failed to fetch organizations');
+    }
+  }
+
+  Future<PaginatedData<Organization>> fetchParticipantOrganizations(
+      Participant participant, int pageNumber, int pageSize) async {
+    final response = await client.get(
+        Uri.parse(
+            '$baseUrl/participants/${participant.id}/organizations?page[number]=$pageNumber&page[size]=$pageSize'),
+        headers: <String, String>{
+          'content-type': 'application/json',
+        });
+
+    if (response.statusCode == 200) {
+      FetchManyResponse fetchManyResponse =
+          FetchManyResponse.fromJson(json.decode(response.body));
+      Meta meta = Meta.fromJson(fetchManyResponse.meta);
+      List<Organization> organizations = (fetchManyResponse.data)
+          .map((i) => Organization.fromJson(i))
+          .toList();
 
       return PaginatedData(meta.itemsPerPage, meta.totalItems, meta.currentPage,
           meta.totalPages, organizations);
@@ -35,8 +65,11 @@ class OrganizationBroker {
   }
 
   Future<Organization> fetchOrganization(String organizationId) async {
-    final response = await client
-        .get(Uri.parse('$baseUrl/organizations/$organizationId'));
+    final response = await client.get(
+        Uri.parse('$baseUrl/organizations/$organizationId'),
+        headers: <String, String>{
+          'content-type': 'application/json',
+        });
 
     if (response.statusCode == 200) {
       FetchOneResponse fetchOneResponse =
@@ -52,7 +85,8 @@ class OrganizationBroker {
     final response = await client.post(
       Uri.parse('$baseUrl/organizations'),
       headers: <String, String>{
-        'authentication': accessToken,
+        'content-type': 'application/json',
+        'authorization': 'Bearer $accessToken',
       },
       body: json.encode(CreateOrUpdateOneRequest(newOrganization.toJson())),
     );
@@ -71,7 +105,8 @@ class OrganizationBroker {
     final response = await client.patch(
       Uri.parse('$baseUrl/organizations/${updatedOrganization.id}'),
       headers: <String, String>{
-        'authentication': accessToken,
+        'content-type': 'application/json',
+        'authorization': 'Bearer $accessToken',
       },
       body: json.encode(CreateOrUpdateOneRequest(updatedOrganization.toJson())),
     );

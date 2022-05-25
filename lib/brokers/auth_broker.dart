@@ -8,13 +8,15 @@ import 'package:todd_coin_ui/models/domain/participant.dart';
 class AuthBroker {
   final http.Client client;
   final String baseUrl;
-  final String accessToken;
 
-  AuthBroker(this.client, this.baseUrl, this.accessToken);
+  AuthBroker(this.client, this.baseUrl);
 
   Future<Token> fetchToken(String email, String password) async {
     final response = await client.post(Uri.parse('$baseUrl/auth/token'),
-        body: '{"email": "$email", "password": "$password"}');
+        body: '{"email": "$email", "password": "$password"}',
+        headers: <String, String>{
+          'content-type': 'application/json',
+        });
 
     if (response.statusCode == 200) {
       return Token.fromJson(json.decode(response.body));
@@ -23,10 +25,11 @@ class AuthBroker {
     }
   }
 
-  Future<Participant> fetchUserInfo() async {
+  Future<Participant> fetchUserInfo(String accessToken) async {
     final response = await client
         .get(Uri.parse('$baseUrl/auth/userinfo'), headers: <String, String>{
-      'authentication': accessToken,
+      'content-type': 'application/json',
+      'authorization': 'Bearer $accessToken',
     });
 
     if (response.statusCode == 200) {

@@ -8,9 +8,6 @@ class Participant {
   final String? phone;
   final List<dynamic> roles;
 
-  Participant(this.id, this.createdAt, this.updatedAt, this.email,
-      this.firstName, this.lastName, this.phone, this.roles);
-
   Participant.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         createdAt = DateTime.parse(json['attributes']['createdAt']),
@@ -25,6 +22,8 @@ class Participant {
         'type': 'participant',
         'id': id,
         'attributes': {
+          'createdAt': createdAt.toIso8601String(),
+          'updatedAt': updatedAt.toIso8601String(),
           'email': email,
           'firstName': firstName,
           'lastName': lastName,

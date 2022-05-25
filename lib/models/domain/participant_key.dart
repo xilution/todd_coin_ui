@@ -3,13 +3,17 @@ class ParticipantKey {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  ParticipantKey(this.id, this.createdAt, this.updatedAt);
-
   ParticipantKey.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         createdAt = DateTime.parse(json['attributes']['createdAt']),
         updatedAt = DateTime.parse(json['attributes']['updatedAt']);
 
-  Map<String, dynamic> toJson() =>
-      {'type': 'participant-key', 'id': id, 'attributes': {}};
+  Map<String, dynamic> toJson() => {
+        'type': 'participant-key',
+        'id': id,
+        'attributes': {
+          'createdAt': createdAt.toIso8601String(),
+          'updatedAt': updatedAt.toIso8601String(),
+        }
+      };
 }

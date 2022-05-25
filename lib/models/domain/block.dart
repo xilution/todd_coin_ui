@@ -7,9 +7,6 @@ class Block {
   final String previousHash;
   final String hash;
 
-  Block(this.id, this.createdAt, this.updatedAt, this.sequenceId, this.nonce,
-      this.previousHash, this.hash);
-
   Block.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         createdAt = DateTime.parse(json['attributes']['createdAt']),
@@ -19,6 +16,16 @@ class Block {
         previousHash = json['attributes']['previousHash'],
         hash = json['attributes']['hash'];
 
-  Map<String, dynamic> toJson() =>
-      {'type': 'block', 'id': id, 'attributes': {}};
+  Map<String, dynamic> toJson() => {
+        'type': 'block',
+        'id': id,
+        'attributes': {
+          'createdAt': createdAt.toIso8601String(),
+          'updatedAt': updatedAt.toIso8601String(),
+          'sequenceId': sequenceId,
+          'nonce': nonce,
+          'previousHash': previousHash,
+          'hash': hash,
+        }
+      };
 }
