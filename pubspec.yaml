@@ -33,6 +33,7 @@ dependencies:
   flutter_pagewise: ^2.0.1
   date_format: ^2.0.6
   intl: ^0.17.0
+  jwt_decoder: ^2.0.1
   flutter:
     sdk: flutter
 

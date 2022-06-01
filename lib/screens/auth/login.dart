@@ -3,11 +3,16 @@ import 'package:http/http.dart';
 import 'package:todd_coin_ui/brokers/auth_broker.dart';
 import 'package:todd_coin_ui/models/api/token.dart';
 import 'package:todd_coin_ui/models/domain/participant.dart';
+import 'package:todd_coin_ui/utilities/api_context.dart';
 import 'package:todd_coin_ui/utilities/app_context.dart';
 import 'package:validators/validators.dart';
 
 class Login extends StatefulWidget {
-  const Login({Key? key}) : super(key: key);
+  final String baseUrl;
+  final void Function(Participant user, Token token) onLogin;
+
+  const Login({Key? key, required this.baseUrl, required this.onLogin})
+      : super(key: key);
 
   @override
   State<Login> createState() => _LoginState();
@@ -85,33 +90,31 @@ class _LoginState extends State<Login> {
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: ElevatedButton(
                       onPressed: () async {
-                        final navigator = Navigator.of(context);
                         if (_formKey.currentState!.validate()) {
-                          String? baseUrl = await AppContext.getBaseUrl();
-                          if (baseUrl != null) {
-                            Client client = Client();
-                            AuthBroker authBroker = AuthBroker(client, baseUrl);
+                          NavigatorState navigator = Navigator.of(context);
+                          ScaffoldMessengerState scaffoldMessenger =
+                              ScaffoldMessenger.of(context);
+                          String baseUrl =
+                              await ApiContext.getBaseUrl(navigator);
+                          AuthBroker authBroker = AuthBroker(Client(), baseUrl);
+
+                          try {
                             Token token =
                                 await authBroker.fetchToken(_email, _password);
-                            await AppContext.setToken(token.access);
+                            await AppContext.setToken(token);
                             Participant user =
                                 await authBroker.fetchUserInfo(token.access);
                             await AppContext.setUser(user);
-                          }
 
-                          navigator.pop();
+                            widget.onLogin(user, token);
+                          } catch (error) {
+                            scaffoldMessenger.showSnackBar(SnackBar(
+                              content: Text(error.toString()),
+                            ));
+                          }
                         }
                       },
                       child: const Text('Login'),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Cancel'),
                     ),
                   ),
                 ],

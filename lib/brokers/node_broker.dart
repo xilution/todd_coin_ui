@@ -11,9 +11,8 @@ import 'package:todd_coin_ui/models/domain/node.dart';
 class NodeBroker {
   final http.Client client;
   final String baseUrl;
-  final String accessToken;
 
-  NodeBroker(this.client, this.baseUrl, this.accessToken);
+  NodeBroker(this.client, this.baseUrl);
 
   Future<PaginatedData<Node>> fetchNodes(int pageNumber, int pageSize) async {
     final response = await client.get(
@@ -53,7 +52,7 @@ class NodeBroker {
     }
   }
 
-  Future<Node> createNode(Node newNode) async {
+  Future<Node> createNode(String accessToken, Node newNode) async {
     final response = await client.post(
       Uri.parse('$baseUrl/nodes'),
       headers: <String, String>{
@@ -63,7 +62,7 @@ class NodeBroker {
       body: json.encode(CreateOrUpdateOneRequest(newNode.toJson())),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       FetchOneResponse fetchOneResponse =
           FetchOneResponse.fromJson(json.decode(response.body));
 
@@ -73,7 +72,7 @@ class NodeBroker {
     }
   }
 
-  Future<void> updateNode(Node updatedNode) async {
+  Future<void> updateNode(String accessToken, Node updatedNode) async {
     final response = await client.patch(
       Uri.parse('$baseUrl/nodes/${updatedNode.id}'),
       headers: <String, String>{
@@ -83,7 +82,7 @@ class NodeBroker {
       body: json.encode(CreateOrUpdateOneRequest(updatedNode.toJson())),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 204) {
       return;
     } else {
       throw Exception('Failed to update a node');

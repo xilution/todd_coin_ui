@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:intl/intl.dart';
+import 'package:todd_coin_ui/brokers/pending_transaction_broker.dart';
+import 'package:todd_coin_ui/models/api/token.dart';
 import 'package:todd_coin_ui/models/domain/date_range.dart';
+import 'package:todd_coin_ui/models/domain/enums.dart';
 import 'package:todd_coin_ui/models/domain/organization.dart';
 import 'package:todd_coin_ui/models/domain/participant.dart';
+import 'package:todd_coin_ui/models/domain/pending_transaction.dart';
+import 'package:todd_coin_ui/models/domain/transaction_details.dart';
 import 'package:todd_coin_ui/screens/date_ranges/select_date_range.dart';
 import 'package:todd_coin_ui/screens/organizations/select_organization.dart';
 import 'package:todd_coin_ui/screens/participants/select_participant.dart';
+import 'package:todd_coin_ui/utilities/api_context.dart';
 import 'package:todd_coin_ui/utilities/app_context.dart';
 
 class CreatePendingTransaction extends StatefulWidget {
-  const CreatePendingTransaction({Key? key}) : super(key: key);
+  final void Function(PendingTransaction pendingTransaction) onCreate;
+
+  const CreatePendingTransaction({Key? key, required this.onCreate})
+      : super(key: key);
 
   @override
   State<CreatePendingTransaction> createState() =>
@@ -84,8 +94,37 @@ class _CreatePendingTransactionState extends State<CreatePendingTransaction> {
                   child: const Icon(Icons.navigate_before),
                 ),
                 TextButton(
-                  onPressed: () {
-                    print("All Done!!!");
+                  onPressed: () async {
+                    NavigatorState navigator = Navigator.of(context);
+                    ScaffoldMessengerState scaffoldMessenger =
+                        ScaffoldMessenger.of(context);
+                    String baseUrl = await ApiContext.getBaseUrl(navigator);
+                    Token token = await ApiContext.getToken(navigator, baseUrl);
+
+                    PendingTransaction newPendingTransaction =
+                        PendingTransaction(
+                      fromParticipant: _fromParticipant,
+                      fromOrganization: _fromOrganization,
+                      toParticipant: _toParticipant,
+                      toOrganization: _toOrganization,
+                      type: transactionTypeStrMap[_transactionType],
+                      description: _description,
+                      details: TimeTransactionDetails(
+                          dateRanges: [_dateRange as DateRange]),
+                    );
+
+                    try {
+                      PendingTransaction createdPendingTransaction =
+                          await PendingTransactionBroker(Client(), baseUrl)
+                              .createPendingTransaction(
+                                  token.access, newPendingTransaction);
+
+                      widget.onCreate(createdPendingTransaction);
+                    } catch (error) {
+                      scaffoldMessenger.showSnackBar(SnackBar(
+                        content: Text(error.toString()),
+                      ));
+                    }
                   },
                   child: const Icon(Icons.done),
                 ),
@@ -167,15 +206,15 @@ class _CreatePendingTransactionState extends State<CreatePendingTransaction> {
                             icon: const Icon(Icons.add_circle),
                             color: Colors.blue,
                             onPressed: () {
-                              Navigator.of(context)
-                                  .push(MaterialPageRoute<void>(
+                              NavigatorState navigator = Navigator.of(context);
+                              navigator.push(MaterialPageRoute<void>(
                                 builder: (BuildContext context) {
                                   return SelectOrganization(
                                     onSelect: (Organization organization) {
                                       setState(() {
                                         _fromOrganization = organization;
                                       });
-                                      Navigator.pop(context);
+                                      navigator.pop();
                                     },
                                     participant: _fromParticipant,
                                   );
@@ -206,15 +245,15 @@ class _CreatePendingTransactionState extends State<CreatePendingTransaction> {
                             icon: const Icon(Icons.add_circle),
                             color: Colors.blue,
                             onPressed: () {
-                              Navigator.of(context)
-                                  .push(MaterialPageRoute<void>(
+                              NavigatorState navigator = Navigator.of(context);
+                              navigator.push(MaterialPageRoute<void>(
                                 builder: (BuildContext context) {
                                   return SelectParticipant(
                                     onSelect: (Participant participant) {
                                       setState(() {
                                         _fromParticipant = participant;
                                       });
-                                      Navigator.pop(context);
+                                      navigator.pop();
                                     },
                                     organization: _fromOrganization,
                                   );
@@ -250,40 +289,42 @@ class _CreatePendingTransactionState extends State<CreatePendingTransaction> {
                     'Are you a solo benefactor or are you contributing on behalf of an organization?'),
                 Row(
                   children: _toOrganization == null
-                  ? [
-                    const Icon(Icons.business),
-                    IconButton(
-                      icon: const Icon(Icons.add_circle),
-                      color: Colors.blue,
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute<void>(
-                          builder: (BuildContext context) {
-                            return SelectOrganization(
-                              onSelect: (Organization organization) {
-                                setState(() {
-                                  _toOrganization = organization;
-                                });
-                                Navigator.pop(context);
-                              },
-                              participant: _toParticipant,
-                            );
-                          },
-                        ));
-                      },
-                    ),
-                  ] : [
-                    const Icon(Icons.business),
-                    Text(_toOrganization?.name ?? ""),
-                    IconButton(
-                      icon: const Icon(Icons.remove_circle),
-                      color: Colors.red,
-                      onPressed: () {
-                        setState(() {
-                          _fromOrganization = null;
-                        });
-                      },
-                    ),
-                  ],
+                      ? [
+                          const Icon(Icons.business),
+                          IconButton(
+                            icon: const Icon(Icons.add_circle),
+                            color: Colors.blue,
+                            onPressed: () {
+                              NavigatorState navigator = Navigator.of(context);
+                              navigator.push(MaterialPageRoute<void>(
+                                builder: (BuildContext context) {
+                                  return SelectOrganization(
+                                    onSelect: (Organization organization) {
+                                      setState(() {
+                                        _toOrganization = organization;
+                                      });
+                                      navigator.pop();
+                                    },
+                                    participant: _toParticipant,
+                                  );
+                                },
+                              ));
+                            },
+                          ),
+                        ]
+                      : [
+                          const Icon(Icons.business),
+                          Text(_toOrganization?.name ?? ""),
+                          IconButton(
+                            icon: const Icon(Icons.remove_circle),
+                            color: Colors.red,
+                            onPressed: () {
+                              setState(() {
+                                _fromOrganization = null;
+                              });
+                            },
+                          ),
+                        ],
                 ),
               ],
             ),
@@ -337,15 +378,15 @@ class _CreatePendingTransactionState extends State<CreatePendingTransaction> {
                             icon: const Icon(Icons.add_circle),
                             color: Colors.blue,
                             onPressed: () {
-                              Navigator.of(context)
-                                  .push(MaterialPageRoute<void>(
+                              NavigatorState navigator = Navigator.of(context);
+                              navigator.push(MaterialPageRoute<void>(
                                 builder: (BuildContext context) {
                                   return SelectDateRange(
                                     onSelect: (DateRange dateRange) {
                                       setState(() {
                                         _dateRange = dateRange;
                                       });
-                                      Navigator.pop(context);
+                                      navigator.pop();
                                     },
                                   );
                                 },

@@ -12,9 +12,8 @@ import 'package:todd_coin_ui/models/domain/participant.dart';
 class ParticipantBroker {
   final http.Client client;
   final String baseUrl;
-  final String accessToken;
 
-  ParticipantBroker(this.client, this.baseUrl, this.accessToken);
+  ParticipantBroker(this.client, this.baseUrl);
 
   Future<PaginatedData<Participant>> fetchParticipants(
       int pageNumber, int pageSize) async {
@@ -130,12 +129,11 @@ class ParticipantBroker {
       Uri.parse('$baseUrl/participants'),
       headers: <String, String>{
         'content-type': 'application/json',
-        'authorization': 'Bearer $accessToken',
       },
       body: json.encode(CreateOrUpdateOneRequest(newParticipant.toJson())),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       FetchOneResponse fetchOneResponse =
           FetchOneResponse.fromJson(json.decode(response.body));
 
@@ -145,7 +143,8 @@ class ParticipantBroker {
     }
   }
 
-  Future<void> updateParticipant(Participant updatedParticipant) async {
+  Future<void> updateParticipant(
+      String accessToken, Participant updatedParticipant) async {
     final response = await client.patch(
       Uri.parse('$baseUrl/participants/${updatedParticipant.id}'),
       headers: <String, String>{
@@ -155,7 +154,7 @@ class ParticipantBroker {
       body: json.encode(CreateOrUpdateOneRequest(updatedParticipant.toJson())),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 204) {
       return;
     } else {
       throw Exception('Failed to update a participant');

@@ -13,16 +13,12 @@ import 'package:todd_coin_ui/models/domain/participant.dart';
 import 'package:todd_coin_ui/models/domain/participant_key.dart';
 import 'package:todd_coin_ui/models/domain/pending_transaction.dart';
 import 'package:todd_coin_ui/models/domain/signed_transaction.dart';
-import 'package:todd_coin_ui/utilities/app_context.dart';
 
-Future<List<Organization>> loadOrganizations(
+Future<List<Organization>> loadOrganizations(String baseUrl,
     Participant? participant, int? pageNumber, int pageSize) async {
-  String? baseUrl = await AppContext.getBaseUrl();
-  String? accessToken = await AppContext.getToken();
-  if (pageNumber != null && baseUrl != null && accessToken != null) {
-    Client client = Client();
+  if (pageNumber != null) {
     OrganizationBroker organizationBroker =
-        OrganizationBroker(client, baseUrl, accessToken);
+        OrganizationBroker(Client(), baseUrl);
 
     List<Organization> organizations = participant != null
         ? (await organizationBroker.fetchParticipantOrganizations(
@@ -36,14 +32,10 @@ Future<List<Organization>> loadOrganizations(
   return [];
 }
 
-Future<List<Participant>> loadParticipants(
+Future<List<Participant>> loadParticipants(String baseUrl,
     Organization? organization, int? pageNumber, int pageSize) async {
-  String? baseUrl = await AppContext.getBaseUrl();
-  String? accessToken = await AppContext.getToken();
-  if (pageNumber != null && baseUrl != null && accessToken != null) {
-    Client client = Client();
-    ParticipantBroker participantBroker =
-        ParticipantBroker(client, baseUrl, accessToken);
+  if (pageNumber != null) {
+    ParticipantBroker participantBroker = ParticipantBroker(Client(), baseUrl);
 
     List<Participant> participants = organization != null
         ? (await participantBroker.fetchOrganizationParticipants(
@@ -57,14 +49,11 @@ Future<List<Participant>> loadParticipants(
   return [];
 }
 
-Future<List<ParticipantKey>> loadParticipantKeys(
+Future<List<ParticipantKey>> loadParticipantKeys(String baseUrl,
     Participant participant, int? pageNumber, int pageSize) async {
-  String? baseUrl = await AppContext.getBaseUrl();
-  String? accessToken = await AppContext.getToken();
-  if (pageNumber != null && baseUrl != null && accessToken != null) {
-    Client client = Client();
+  if (pageNumber != null) {
     ParticipantKeyBroker participantKeyBroker =
-        ParticipantKeyBroker(client, baseUrl, accessToken);
+        ParticipantKeyBroker(Client(), baseUrl);
 
     List<ParticipantKey> participantKeys = (await participantKeyBroker
             .fetchParticipantKeys(participant, pageNumber, pageSize))
@@ -75,12 +64,10 @@ Future<List<ParticipantKey>> loadParticipantKeys(
   return [];
 }
 
-Future<List<Block>> loadBlocks(int? pageNumber, int pageSize) async {
-  String? baseUrl = await AppContext.getBaseUrl();
-  String? accessToken = await AppContext.getToken();
-  if (pageNumber != null && baseUrl != null && accessToken != null) {
-    Client client = Client();
-    BlockBroker blockBroker = BlockBroker(client, baseUrl, accessToken);
+Future<List<Block>> loadBlocks(
+    String baseUrl, int? pageNumber, int pageSize) async {
+  if (pageNumber != null) {
+    BlockBroker blockBroker = BlockBroker(Client(), baseUrl);
 
     List<Block> blocks =
         (await blockBroker.fetchBlocks(pageNumber, pageSize)).rows;
@@ -91,13 +78,10 @@ Future<List<Block>> loadBlocks(int? pageNumber, int pageSize) async {
 }
 
 Future<List<BlockTransaction>> loadBlockTransactions(
-    Block block, int? pageNumber, int pageSize) async {
-  String? baseUrl = await AppContext.getBaseUrl();
-  String? accessToken = await AppContext.getToken();
-  if (pageNumber != null && baseUrl != null && accessToken != null) {
-    Client client = Client();
+    String baseUrl, Block block, int? pageNumber, int pageSize) async {
+  if (pageNumber != null) {
     BlockTransactionBroker blockTransactionBroker =
-        BlockTransactionBroker(client, baseUrl, accessToken);
+        BlockTransactionBroker(Client(), baseUrl);
 
     List<BlockTransaction> blockTransactions = (await blockTransactionBroker
             .fetchBlockTransactions(block, pageNumber, pageSize))
@@ -109,13 +93,10 @@ Future<List<BlockTransaction>> loadBlockTransactions(
 }
 
 Future<List<PendingTransaction>> loadPendingTransactions(
-    int? pageNumber, int pageSize) async {
-  String? baseUrl = await AppContext.getBaseUrl();
-  String? accessToken = await AppContext.getToken();
-  if (pageNumber != null && baseUrl != null && accessToken != null) {
-    Client client = Client();
+    String baseUrl, int? pageNumber, int pageSize) async {
+  if (pageNumber != null) {
     PendingTransactionBroker pendingTransactionBroker =
-        PendingTransactionBroker(client, baseUrl, accessToken);
+        PendingTransactionBroker(Client(), baseUrl);
 
     List<PendingTransaction> pendingTransactions =
         (await pendingTransactionBroker.fetchPendingTransactions(
@@ -128,13 +109,10 @@ Future<List<PendingTransaction>> loadPendingTransactions(
 }
 
 Future<List<SignedTransaction>> loadSignedTransactions(
-    int? pageNumber, int pageSize) async {
-  String? baseUrl = await AppContext.getBaseUrl();
-  String? accessToken = await AppContext.getToken();
-  if (pageNumber != null && baseUrl != null && accessToken != null) {
-    Client client = Client();
+    String baseUrl, int? pageNumber, int pageSize) async {
+  if (pageNumber != null) {
     SignedTransactionBroker signedTransactionBroker =
-        SignedTransactionBroker(client, baseUrl, accessToken);
+        SignedTransactionBroker(Client(), baseUrl);
 
     List<SignedTransaction> signedTransactions = (await signedTransactionBroker
             .fetchSignedTransactions(pageNumber, pageSize))

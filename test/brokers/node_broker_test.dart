@@ -20,16 +20,15 @@ void main() {
       final client = MockClient();
 
       const String baseUrl = 'http://localhost:3000';
-      final String accessToken = randomAlpha(10);
       final int pageNumber = randomBetween(0, 10);
       final int pageSize = randomBetween(0, 10);
-      final NodeBroker nodeBroker = NodeBroker(client, baseUrl, accessToken);
+      final NodeBroker nodeBroker = NodeBroker(client, baseUrl);
 
       when(client.get(
           Uri.parse(
               '$baseUrl/nodes?page[number]=$pageNumber&page[size]=$pageSize'),
           headers: <String, String>{
-            'authorization': 'Bearer $accessToken',
+            'content-type': 'application/json',
           })).thenAnswer((_) async => http.Response("""
           {
             "jsonapi": {
@@ -86,14 +85,14 @@ void main() {
       final client = MockClient();
 
       const String baseUrl = 'http://localhost:3000';
-      final String accessToken = randomAlpha(10);
       final String nodeId = randomAlpha(32);
-      final NodeBroker nodeBroker = NodeBroker(client, baseUrl, accessToken);
+      final NodeBroker nodeBroker = NodeBroker(client, baseUrl);
 
       when(client
-          .get(Uri.parse('$baseUrl/nodes/$nodeId'), headers: <String, String>{
-        'authorization': 'Bearer $accessToken',
-      })).thenAnswer((_) async => http.Response("""
+          .get(Uri.parse('$baseUrl/nodes/$nodeId'),
+          headers: <String, String>{
+            'content-type': 'application/json',
+          })).thenAnswer((_) async => http.Response("""
           {
             "jsonapi": {
               "version": "1.0"
@@ -140,10 +139,11 @@ void main() {
         updatedAt: updatedAt,
         baseUrl: baseUrl
       );
-      final NodeBroker nodeBroker = NodeBroker(client, baseUrl, accessToken);
+      final NodeBroker nodeBroker = NodeBroker(client, baseUrl);
 
       when(client.post(Uri.parse('$baseUrl/nodes'),
               headers: <String, String>{
+                'content-type': 'application/json',
                 'authorization': 'Bearer $accessToken',
               },
               body: json.encode(CreateOrUpdateOneRequest(newNode.toJson()))))
@@ -170,7 +170,7 @@ void main() {
           }
           """, 200));
 
-      Node createdNode = await nodeBroker.createNode(newNode);
+      Node createdNode = await nodeBroker.createNode(accessToken, newNode);
 
       expect(createdNode.id, id);
       expect(createdNode.createdAt, createdAt);
@@ -194,10 +194,11 @@ void main() {
           updatedAt: updatedAt,
           baseUrl: baseUrl
       );
-      final NodeBroker nodeBroker = NodeBroker(client, baseUrl, accessToken);
+      final NodeBroker nodeBroker = NodeBroker(client, baseUrl);
 
       when(client.patch(Uri.parse('$baseUrl/nodes/${updatedNode.id}'),
               headers: <String, String>{
+                'content-type': 'application/json',
                 'authorization': 'Bearer $accessToken',
               },
               body:
@@ -225,7 +226,7 @@ void main() {
           }
           """, 200));
 
-      await nodeBroker.updateNode(updatedNode);
+      await nodeBroker.updateNode(accessToken, updatedNode);
     });
   });
 }

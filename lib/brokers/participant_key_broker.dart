@@ -12,9 +12,8 @@ import 'package:todd_coin_ui/models/domain/participant_key.dart';
 class ParticipantKeyBroker {
   final http.Client client;
   final String baseUrl;
-  final String accessToken;
 
-  ParticipantKeyBroker(this.client, this.baseUrl, this.accessToken);
+  ParticipantKeyBroker(this.client, this.baseUrl);
 
   Future<PaginatedData<ParticipantKey>> fetchParticipantKeys(
       Participant participant, int pageNumber, int pageSize) async {
@@ -59,7 +58,7 @@ class ParticipantKeyBroker {
     }
   }
 
-  Future<ParticipantKey> createParticipantKey(
+  Future<ParticipantKey> createParticipantKey(String accessToken,
       Participant participant, ParticipantKey newParticipantKey) async {
     final response = await client.post(
       Uri.parse('$baseUrl/participants/${participant.id}/participant-keys'),
@@ -70,7 +69,7 @@ class ParticipantKeyBroker {
       body: json.encode(CreateOrUpdateOneRequest(newParticipantKey.toJson())),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       FetchOneResponse fetchOneResponse =
           FetchOneResponse.fromJson(json.decode(response.body));
 
@@ -80,8 +79,8 @@ class ParticipantKeyBroker {
     }
   }
 
-  Future<void> updateParticipantKey(
-      Participant participant, ParticipantKey updatedParticipantKey) async {
+  Future<void> updateParticipantKey(String accessToken, Participant participant,
+      ParticipantKey updatedParticipantKey) async {
     final response = await client.patch(
       Uri.parse(
           '$baseUrl/participants/${participant.id}/participant-keys/${updatedParticipantKey.id}'),
@@ -93,7 +92,7 @@ class ParticipantKeyBroker {
           json.encode(CreateOrUpdateOneRequest(updatedParticipantKey.toJson())),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 204) {
       return;
     } else {
       throw Exception('Failed to update a participantKey');

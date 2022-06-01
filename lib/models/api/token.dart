@@ -4,4 +4,8 @@ class Token {
   Token(this.access);
 
   Token.fromJson(Map<String, dynamic> json) : access = json['access'];
+
+  Map<String, dynamic> toJson() => {
+        'access': access,
+      };
 }

@@ -11,9 +11,8 @@ import 'package:todd_coin_ui/models/domain/signed_transaction.dart';
 class SignedTransactionBroker {
   final http.Client client;
   final String baseUrl;
-  final String accessToken;
 
-  SignedTransactionBroker(this.client, this.baseUrl, this.accessToken);
+  SignedTransactionBroker(this.client, this.baseUrl);
 
   Future<PaginatedData<SignedTransaction>> fetchSignedTransactions(
       int pageNumber, int pageSize) async {
@@ -58,7 +57,7 @@ class SignedTransactionBroker {
   }
 
   Future<SignedTransaction> createSignedTransaction(
-      SignedTransaction newSignedTransaction) async {
+      String accessToken, SignedTransaction newSignedTransaction) async {
     final response = await client.post(
       Uri.parse('$baseUrl/signed-transactions'),
       headers: <String, String>{
@@ -69,7 +68,7 @@ class SignedTransactionBroker {
           json.encode(CreateOrUpdateOneRequest(newSignedTransaction.toJson())),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       FetchOneResponse fetchOneResponse =
           FetchOneResponse.fromJson(json.decode(response.body));
 
@@ -80,7 +79,7 @@ class SignedTransactionBroker {
   }
 
   Future<void> updateSignedTransaction(
-      SignedTransaction updatedSignedTransaction) async {
+      String accessToken, SignedTransaction updatedSignedTransaction) async {
     final response = await client.patch(
       Uri.parse('$baseUrl/signed-transactions/${updatedSignedTransaction.id}'),
       headers: <String, String>{
@@ -91,7 +90,7 @@ class SignedTransactionBroker {
           .encode(CreateOrUpdateOneRequest(updatedSignedTransaction.toJson())),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 204) {
       return;
     } else {
       throw Exception('Failed to update a signedTransaction');

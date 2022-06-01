@@ -12,9 +12,8 @@ import 'package:todd_coin_ui/models/domain/participant.dart';
 class OrganizationBroker {
   final http.Client client;
   final String baseUrl;
-  final String accessToken;
 
-  OrganizationBroker(this.client, this.baseUrl, this.accessToken);
+  OrganizationBroker(this.client, this.baseUrl);
 
   Future<PaginatedData<Organization>> fetchOrganizations(
       int pageNumber, int pageSize) async {
@@ -81,7 +80,8 @@ class OrganizationBroker {
     }
   }
 
-  Future<Organization> createOrganization(Organization newOrganization) async {
+  Future<Organization> createOrganization(
+      String accessToken, Organization newOrganization) async {
     final response = await client.post(
       Uri.parse('$baseUrl/organizations'),
       headers: <String, String>{
@@ -91,7 +91,7 @@ class OrganizationBroker {
       body: json.encode(CreateOrUpdateOneRequest(newOrganization.toJson())),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       FetchOneResponse fetchOneResponse =
           FetchOneResponse.fromJson(json.decode(response.body));
 
@@ -101,7 +101,8 @@ class OrganizationBroker {
     }
   }
 
-  Future<void> updateOrganization(Organization updatedOrganization) async {
+  Future<void> updateOrganization(
+      String accessToken, Organization updatedOrganization) async {
     final response = await client.patch(
       Uri.parse('$baseUrl/organizations/${updatedOrganization.id}'),
       headers: <String, String>{
@@ -111,7 +112,7 @@ class OrganizationBroker {
       body: json.encode(CreateOrUpdateOneRequest(updatedOrganization.toJson())),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 204) {
       return;
     } else {
       throw Exception('Failed to update a organization');

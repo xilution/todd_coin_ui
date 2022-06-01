@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_pagewise/flutter_pagewise.dart';
 import 'package:todd_coin_ui/models/domain/organization.dart';
 import 'package:todd_coin_ui/models/domain/participant.dart';
+import 'package:todd_coin_ui/utilities/api_context.dart';
 import 'package:todd_coin_ui/utilities/data_helpers.dart';
 
 import '../../models/domain/participant.dart';
@@ -26,7 +27,7 @@ class _ListParticipantsState extends State<ListParticipants> {
         itemBuilder: (context, participant, index) {
           return ListTile(
             title: Text(
-              participant.email,
+              participant.email ?? "Unknown",
               style: const TextStyle(fontSize: 18),
             ),
             onTap: () {
@@ -39,8 +40,11 @@ class _ListParticipantsState extends State<ListParticipants> {
               ? const Text('No participants found.')
               : Text('No participants found for ${widget.organization?.name}');
         },
-        pageFuture: (pageIndex) {
-          return loadParticipants(widget.organization, pageIndex, 10);
+        pageFuture: (pageIndex) async {
+          NavigatorState navigator = Navigator.of(context);
+          String baseUrl = await ApiContext.getBaseUrl(navigator);
+
+          return loadParticipants(baseUrl, widget.organization, pageIndex, 10);
         });
   }
 }

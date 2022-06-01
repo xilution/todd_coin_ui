@@ -11,9 +11,8 @@ import 'package:todd_coin_ui/models/domain/block_transaction.dart';
 class BlockTransactionBroker {
   final http.Client client;
   final String baseUrl;
-  final String accessToken;
 
-  BlockTransactionBroker(this.client, this.baseUrl, this.accessToken);
+  BlockTransactionBroker(this.client, this.baseUrl);
 
   Future<PaginatedData<BlockTransaction>> fetchBlockTransactions(
       Block block, int pageNumber, int pageSize) async {

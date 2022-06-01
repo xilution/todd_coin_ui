@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pagewise/flutter_pagewise.dart';
+import 'package:todd_coin_ui/utilities/api_context.dart';
 import 'package:todd_coin_ui/utilities/data_helpers.dart';
 
 import '../../models/domain/block.dart';
@@ -33,8 +34,11 @@ class _ListBlocksState extends State<ListBlocks> {
         noItemsFoundBuilder: (context) {
           return const Text('No blocks found.');
         },
-        pageFuture: (pageIndex) {
-          return loadBlocks(pageIndex, 10);
+        pageFuture: (pageIndex) async {
+          NavigatorState navigator = Navigator.of(context);
+          String baseUrl = await ApiContext.getBaseUrl(navigator);
+
+          return loadBlocks(baseUrl, pageIndex, 10);
         });
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pagewise/flutter_pagewise.dart';
 import 'package:todd_coin_ui/models/domain/block.dart';
+import 'package:todd_coin_ui/utilities/api_context.dart';
 import 'package:todd_coin_ui/utilities/data_helpers.dart';
 
 import '../../models/domain/block_transaction.dart';
@@ -37,8 +38,11 @@ class _ListBlockTransactionsState extends State<ListBlockTransactions> {
         noItemsFoundBuilder: (context) {
           return const Text('No blockTransactions found.');
         },
-        pageFuture: (pageIndex) {
-          return loadBlockTransactions(widget.block, pageIndex, 10);
+        pageFuture: (pageIndex) async {
+          NavigatorState navigator = Navigator.of(context);
+          String baseUrl = await ApiContext.getBaseUrl(navigator);
+
+          return loadBlockTransactions(baseUrl, widget.block, pageIndex, 10);
         });
   }
 }

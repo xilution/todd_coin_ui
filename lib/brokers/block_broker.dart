@@ -10,9 +10,8 @@ import 'package:todd_coin_ui/models/domain/block.dart';
 class BlockBroker {
   final http.Client client;
   final String baseUrl;
-  final String accessToken;
 
-  BlockBroker(this.client, this.baseUrl, this.accessToken);
+  BlockBroker(this.client, this.baseUrl);
 
   Future<PaginatedData<Block>> fetchBlocks(int pageNumber, int pageSize) async {
     final response = await client.get(

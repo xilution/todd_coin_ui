@@ -11,9 +11,8 @@ import 'package:todd_coin_ui/models/domain/pending_transaction.dart';
 class PendingTransactionBroker {
   final http.Client client;
   final String baseUrl;
-  final String accessToken;
 
-  PendingTransactionBroker(this.client, this.baseUrl, this.accessToken);
+  PendingTransactionBroker(this.client, this.baseUrl);
 
   Future<PaginatedData<PendingTransaction>> fetchPendingTransactions(
       int pageNumber, int pageSize) async {
@@ -58,7 +57,7 @@ class PendingTransactionBroker {
   }
 
   Future<PendingTransaction> createPendingTransaction(
-      PendingTransaction newPendingTransaction) async {
+      String accessToken, PendingTransaction newPendingTransaction) async {
     final response = await client.post(
       Uri.parse('$baseUrl/pending-transactions'),
       headers: <String, String>{
@@ -69,18 +68,20 @@ class PendingTransactionBroker {
           json.encode(CreateOrUpdateOneRequest(newPendingTransaction.toJson())),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       FetchOneResponse fetchOneResponse =
           FetchOneResponse.fromJson(json.decode(response.body));
 
       return PendingTransaction.fromJson(fetchOneResponse.data);
     } else {
+      print(response.statusCode);
+      print(response.body);
       throw Exception('Failed to create a pendingTransaction');
     }
   }
 
   Future<void> updatePendingTransaction(
-      PendingTransaction updatedPendingTransaction) async {
+      String accessToken, PendingTransaction updatedPendingTransaction) async {
     final response = await client.patch(
       Uri.parse(
           '$baseUrl/pending-transactions/${updatedPendingTransaction.id}'),
@@ -92,7 +93,7 @@ class PendingTransactionBroker {
           .encode(CreateOrUpdateOneRequest(updatedPendingTransaction.toJson())),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 204) {
       return;
     } else {
       throw Exception('Failed to update a pendingTransaction');
@@ -100,7 +101,7 @@ class PendingTransactionBroker {
   }
 
   Future<void> deletePendingTransaction(
-      PendingTransaction existingPendingTransaction) async {
+      String accessToken, PendingTransaction existingPendingTransaction) async {
     final response = await client.delete(
       Uri.parse(
           '$baseUrl/pending-transactions/${existingPendingTransaction.id}'),
@@ -110,7 +111,7 @@ class PendingTransactionBroker {
       },
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 204) {
       return;
     } else {
       throw Exception('Failed to update a pendingTransaction');

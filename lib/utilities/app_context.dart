@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todd_coin_ui/models/api/token.dart';
 
 import '../models/domain/participant.dart';
 
@@ -16,15 +17,16 @@ class AppContext {
     return prefs.getString('baseUrl');
   }
 
-  static Future<void> setToken(String token) async {
+  static Future<void> setToken(Token token) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('token', token);
+    await prefs.setString('token', json.encode(token.toJson()));
   }
 
-  static Future<String?> getToken() async {
+  static Future<Token?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
+    String? string = prefs.getString('token');
 
-    return prefs.getString('token');
+    return string == null ? null : Token.fromJson(json.decode(string));
   }
 
   static Future<void> setUser(Participant user) async {

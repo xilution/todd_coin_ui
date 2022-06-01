@@ -3,7 +3,9 @@ import 'package:todd_coin_ui/utilities/app_context.dart';
 import 'package:validators/validators.dart';
 
 class EditSettings extends StatefulWidget {
-  const EditSettings({Key? key}) : super(key: key);
+  final void Function(String baseUrl) onSave;
+
+  const EditSettings({Key? key, required this.onSave}) : super(key: key);
 
   @override
   State<EditSettings> createState() => _EditSettingsState();
@@ -18,7 +20,7 @@ class _EditSettingsState extends State<EditSettings> {
   void initState() {
     AppContext.getBaseUrl().then((String? baseUrl) {
       setState(() {
-        _baseUrl = baseUrl ?? "";
+        _baseUrl = baseUrl ?? "http://localhost:3000";
       });
     });
 
@@ -63,12 +65,19 @@ class _EditSettingsState extends State<EditSettings> {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
               child: ElevatedButton(
                 onPressed: () async {
-                  final scaffoldMessenger = ScaffoldMessenger.of(context);
                   if (_formKey.currentState!.validate()) {
-                    await AppContext.setBaseUrl(_baseUrl);
-                    scaffoldMessenger.showSnackBar(
-                      const SnackBar(content: Text('Settings Saved')),
-                    );
+                    ScaffoldMessengerState scaffoldMessenger =
+                        ScaffoldMessenger.of(context);
+
+                    try {
+                      await AppContext.setBaseUrl(_baseUrl);
+
+                      widget.onSave(_baseUrl);
+                    } catch (error) {
+                      scaffoldMessenger.showSnackBar(SnackBar(
+                        content: Text(error.toString()),
+                      ));
+                    }
                   }
                 },
                 child: const Text('Save'),

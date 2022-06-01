@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:todd_coin_ui/brokers/pending_transaction_broker.dart';
+import 'package:todd_coin_ui/models/api/token.dart';
+import 'package:todd_coin_ui/models/domain/pending_transaction.dart';
+import 'package:todd_coin_ui/utilities/api_context.dart';
 
 class EditPendingTransaction extends StatefulWidget {
-  const EditPendingTransaction({Key? key}) : super(key: key);
+  final PendingTransaction? existingPendingTransaction;
+  final void Function(PendingTransaction pendingTransaction) onSubmit;
+  const EditPendingTransaction(
+      {Key? key,
+      required this.existingPendingTransaction,
+      required this.onSubmit})
+      : super(key: key);
 
   @override
   State<EditPendingTransaction> createState() => _EditPendingTransactionState();
@@ -166,21 +177,37 @@ class _EditPendingTransactionState extends State<EditPendingTransaction> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          Navigator.pop(context);
+                          if (widget.existingPendingTransaction != null) {
+                            NavigatorState navigator = Navigator.of(context);
+                            ScaffoldMessengerState scaffoldMessenger =
+                                ScaffoldMessenger.of(context);
+
+                            String baseUrl =
+                                await ApiContext.getBaseUrl(navigator);
+                            Token token =
+                                await ApiContext.getToken(navigator, baseUrl);
+                            PendingTransaction updatedPendingTransaction =
+                                widget.existingPendingTransaction?.copy();
+                            updatedPendingTransaction.description =
+                                _description;
+
+                            try {
+                              await PendingTransactionBroker(Client(), baseUrl)
+                                  .updatePendingTransaction(
+                                      token.access, updatedPendingTransaction);
+
+                              widget.onSubmit(updatedPendingTransaction);
+                            } catch (error) {
+                              scaffoldMessenger.showSnackBar(SnackBar(
+                                content: Text(error.toString()),
+                              ));
+                            }
+                          }
                         }
                       },
-                      child: const Text('Create'),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Cancel'),
+                      child: const Text('Submit'),
                     ),
                   ),
                 ],

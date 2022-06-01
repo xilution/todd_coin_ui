@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:todd_coin_ui/brokers/participant_broker.dart';
+import 'package:todd_coin_ui/models/api/token.dart';
+import 'package:todd_coin_ui/models/domain/participant.dart';
+import 'package:todd_coin_ui/utilities/api_context.dart';
 
 class EditParticipant extends StatefulWidget {
-  const EditParticipant({Key? key}) : super(key: key);
+  final Participant? existingParticipant;
+  final void Function(Participant? particpant) onSubmit;
+
+  const EditParticipant(
+      {Key? key, this.existingParticipant, required this.onSubmit})
+      : super(key: key);
 
   @override
   State<EditParticipant> createState() => _EditParticipantState();
@@ -49,7 +59,7 @@ class _EditParticipantState extends State<EditParticipant> {
                 initialValue: _password,
                 decoration: const InputDecoration(
                   border: UnderlineInputBorder(),
-                  labelText: 'From Participant ID',
+                  labelText: 'Password',
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -72,8 +82,49 @@ class _EditParticipantState extends State<EditParticipant> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {}
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          NavigatorState navigator = Navigator.of(context);
+                          ScaffoldMessengerState scaffoldMessenger =
+                              ScaffoldMessenger.of(context);
+                          String baseUrl =
+                              await ApiContext.getBaseUrl(navigator);
+
+                          if (widget.existingParticipant != null) {
+                            Token token =
+                                await ApiContext.getToken(navigator, baseUrl);
+
+                            Participant updatedParticipant =
+                                widget.existingParticipant?.copy();
+                            updatedParticipant.email = _email;
+                            try {
+                              await ParticipantBroker(Client(), baseUrl)
+                                  .updateParticipant(
+                                      token.access, updatedParticipant);
+
+                              widget.onSubmit(updatedParticipant);
+                            } catch (error) {
+                              scaffoldMessenger.showSnackBar(SnackBar(
+                                content: Text(error.toString()),
+                              ));
+                            }
+                          } else {
+                            Participant newParticipant = Participant(
+                                email: _email,
+                                password: _password,
+                                roles: ["VOLUNTEER"]);
+                            try {
+                              await ParticipantBroker(Client(), baseUrl)
+                                  .createParticipant(newParticipant);
+
+                              widget.onSubmit(newParticipant);
+                            } catch (error) {
+                              scaffoldMessenger.showSnackBar(SnackBar(
+                                content: Text(error.toString()),
+                              ));
+                            }
+                          }
+                        }
                       },
                       child: const Text('Create'),
                     ),
