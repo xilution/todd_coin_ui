@@ -98,7 +98,7 @@ class _CreatePendingTransactionState extends State<CreatePendingTransaction> {
                     NavigatorState navigator = Navigator.of(context);
                     ScaffoldMessengerState scaffoldMessenger =
                         ScaffoldMessenger.of(context);
-                    String baseUrl = await ApiContext.getBaseUrl(navigator);
+                    String baseUrl = await AppContext.getBaseUrl();
                     Token token = await ApiContext.getToken(navigator, baseUrl);
 
                     PendingTransaction newPendingTransaction =

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todd_coin_ui/models/domain/block.dart';
 import 'package:todd_coin_ui/models/domain/block_transaction.dart';
+import 'package:todd_coin_ui/utilities/app_context.dart';
 import 'package:todd_coin_ui/widgets/block_transactions/list_block_transactions.dart';
 
 class ViewBlockTransactions extends StatefulWidget {
@@ -16,15 +17,29 @@ class ViewBlockTransactions extends StatefulWidget {
 }
 
 class _ViewBlockTransactionsState extends State<ViewBlockTransactions> {
+  ListBlockTransactionsController? _listBlockTransactionsController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    AppContext.getBaseUrl().then((String baseUrl) {
+      setState(() {
+        _listBlockTransactionsController =
+            ListBlockTransactionsController(baseUrl: baseUrl, block: widget.block);
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('View Block Transactions')),
       body: ListBlockTransactions(
-        block: widget.block,
         onSelect: (BlockTransaction blockTransaction) {
           widget.onSelect(blockTransaction);
         },
+        listBlockTransactionsController: _listBlockTransactionsController,
       ),
     );
   }

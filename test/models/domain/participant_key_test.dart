@@ -1,8 +1,6 @@
 import 'dart:convert';
 
 import 'package:test/test.dart';
-import 'package:todd_coin_ui/models/domain/organization.dart';
-import 'package:todd_coin_ui/models/domain/participant.dart';
 import 'package:todd_coin_ui/models/domain/participant_key.dart';
 
 void main() {

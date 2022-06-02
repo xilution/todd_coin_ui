@@ -4,6 +4,7 @@ import 'package:todd_coin_ui/brokers/organization_broker.dart';
 import 'package:todd_coin_ui/models/api/token.dart';
 import 'package:todd_coin_ui/models/domain/organization.dart';
 import 'package:todd_coin_ui/utilities/api_context.dart';
+import 'package:todd_coin_ui/utilities/app_context.dart';
 
 class EditOrganization extends StatefulWidget {
   final Organization? existingOrganization;
@@ -72,8 +73,7 @@ class _EditOrganizationState extends State<EditOrganization> {
                           NavigatorState navigator = Navigator.of(context);
                           ScaffoldMessengerState scaffoldMessenger =
                               ScaffoldMessenger.of(context);
-                          String baseUrl =
-                              await ApiContext.getBaseUrl(navigator);
+                          String baseUrl = await AppContext.getBaseUrl();
                           Token token =
                               await ApiContext.getToken(navigator, baseUrl);
 

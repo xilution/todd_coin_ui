@@ -1,24 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pagewise/flutter_pagewise.dart';
-import 'package:todd_coin_ui/utilities/api_context.dart';
 import 'package:todd_coin_ui/utilities/data_helpers.dart';
 
 import '../../models/domain/block.dart';
 
 class ListBlocks extends StatefulWidget {
+  final ListBlocksController? listBlocksController;
   final void Function(Block block) onSelect;
 
-  const ListBlocks({Key? key, required this.onSelect}) : super(key: key);
+  const ListBlocks(
+      {Key? key, this.listBlocksController, required this.onSelect})
+      : super(key: key);
 
   @override
   State<ListBlocks> createState() => _ListBlocksState();
 }
 
+class ListBlocksController {
+  late PagewiseLoadController<Block> pagewiseLoadController;
+  String baseUrl;
+
+  ListBlocksController({
+    required this.baseUrl,
+  }) {
+    pagewiseLoadController = PagewiseLoadController<Block>(
+        pageSize: 10,
+        pageFuture: (pageIndex) async {
+          return loadBlocks(baseUrl, pageIndex, 10);
+        });
+  }
+
+  void reset() {
+    pagewiseLoadController.reset();
+  }
+}
+
 class _ListBlocksState extends State<ListBlocks> {
   @override
   Widget build(BuildContext context) {
-    return PagewiseListView<Block>(
-        pageSize: 10,
+    return RefreshIndicator(
+      onRefresh: () async {
+        widget.listBlocksController?.reset();
+      },
+      child: PagewiseListView<Block>(
         padding: const EdgeInsets.all(15.0),
         itemBuilder: (context, block, index) {
           return ListTile(
@@ -34,11 +58,12 @@ class _ListBlocksState extends State<ListBlocks> {
         noItemsFoundBuilder: (context) {
           return const Text('No blocks found.');
         },
-        pageFuture: (pageIndex) async {
-          NavigatorState navigator = Navigator.of(context);
-          String baseUrl = await ApiContext.getBaseUrl(navigator);
-
-          return loadBlocks(baseUrl, pageIndex, 10);
-        });
+        pageLoadController: widget.listBlocksController != null
+            ? widget.listBlocksController?.pagewiseLoadController
+            : PagewiseLoadController(
+                pageFuture: (int? pageSize) => Future.value(<Block>[]),
+                pageSize: 0),
+      ),
+    );
   }
 }

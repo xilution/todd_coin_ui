@@ -56,12 +56,12 @@ class PendingTransaction {
         type = transactionTypeStrMap[json['attributes']['type']],
         description = json['attributes']['description'],
         details = TimeTransactionDetails(
-            dateRanges: (json['attributes']['details']['dateRanges']
-                    as List<dynamic>)
-                .map((dynamic dateRange) => DateRange(
-                    from: DateTime.parse(dateRange['from']),
-                    to: DateTime.parse(dateRange['to'])))
-                .toList());
+            dateRanges:
+                (json['attributes']['details']['dateRanges'] as List<dynamic>)
+                    .map((dynamic dateRange) => DateRange(
+                        from: DateTime.parse(dateRange['from']),
+                        to: DateTime.parse(dateRange['to'])))
+                    .toList());
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> base = {

@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:test/test.dart';
-import 'package:todd_coin_ui/models/domain/block_transaction.dart';
 import 'package:todd_coin_ui/models/domain/pending_transaction.dart';
 
 void main() {

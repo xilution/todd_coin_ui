@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todd_coin_ui/models/domain/participant.dart';
+import 'package:todd_coin_ui/utilities/app_context.dart';
 import 'package:todd_coin_ui/widgets/organizations/list_organizations.dart';
 
 import '../../models/domain/organization.dart';
@@ -16,6 +17,20 @@ class SelectOrganization extends StatefulWidget {
 }
 
 class _SelectOrganizationState extends State<SelectOrganization> {
+  ListOrganizationsController? _listOrganizationsController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    AppContext.getBaseUrl().then((String baseUrl) {
+      setState(() {
+        _listOrganizationsController =
+            ListOrganizationsController(baseUrl: baseUrl);
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +39,7 @@ class _SelectOrganizationState extends State<SelectOrganization> {
         onSelect: (Organization organization) {
           widget.onSelect(organization);
         },
-        participant: widget.participant,
+        listOrganizationsController: _listOrganizationsController,
       ),
       floatingActionButton: Visibility(
           child: FloatingActionButton(

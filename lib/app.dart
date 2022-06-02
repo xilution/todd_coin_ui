@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:todd_coin_ui/models/domain/block.dart';
 import 'package:todd_coin_ui/models/domain/organization.dart';
 import 'package:todd_coin_ui/models/domain/participant.dart';
 import 'package:todd_coin_ui/models/domain/pending_transaction.dart';
@@ -13,8 +12,8 @@ import 'package:todd_coin_ui/utilities/app_context.dart';
 import 'package:todd_coin_ui/widgets/organizations/list_organizations.dart';
 import 'package:todd_coin_ui/widgets/participants/list_participants.dart';
 
-import 'screens/blocks/view_block.dart';
-import 'widgets/blocks/list_blocks.dart';
+import 'screens/pending_transactions/view_pending_transactions.dart';
+import 'widgets/pending_transactions/list_pending_transactions.dart';
 
 const String _title = 'Todd Coin';
 
@@ -39,38 +38,9 @@ class AppHome extends StatefulWidget {
 
 class _AppHomeState extends State<AppHome> {
   int _selectedIndex = 0;
-
-  static List<Widget> _getWidgetOptions(BuildContext context) {
-    return <Widget>[
-      ListBlocks(onSelect: (Block block) {
-        Navigator.of(context).push(MaterialPageRoute<void>(
-          builder: (BuildContext context) {
-            return ViewBlock(
-              block: block,
-            );
-          },
-        ));
-      }),
-      ListParticipants(onSelect: (Participant participant) {
-        Navigator.of(context).push(MaterialPageRoute<void>(
-          builder: (BuildContext context) {
-            return ViewParticipant(
-              participant: participant,
-            );
-          },
-        ));
-      }),
-      ListOrganizations(onSelect: (Organization organization) {
-        Navigator.of(context).push(MaterialPageRoute<void>(
-          builder: (BuildContext context) {
-            return ViewOrganization(
-              organization: organization,
-            );
-          },
-        ));
-      }),
-    ];
-  }
+  ListPendingTransactionsController? _listPendingTransactionsController;
+  ListParticipantsController? _listParticipantsController;
+  ListOrganizationsController? _listOrganizationsController;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -80,13 +50,18 @@ class _AppHomeState extends State<AppHome> {
 
   @override
   void initState() {
-    AppContext.getBaseUrl().then((String? baseUrl) {
-      if (baseUrl == null) {
-        AppContext.setBaseUrl("http://localhost:3000");
-      }
-    });
-
     super.initState();
+
+    AppContext.getBaseUrl().then((String baseUrl) {
+      setState(() {
+        _listPendingTransactionsController =
+            ListPendingTransactionsController(baseUrl: baseUrl);
+        _listParticipantsController =
+            ListParticipantsController(baseUrl: baseUrl);
+        _listOrganizationsController =
+            ListOrganizationsController(baseUrl: baseUrl);
+      });
+    });
   }
 
   @override
@@ -110,7 +85,45 @@ class _AppHomeState extends State<AppHome> {
         ],
       ),
       body: Center(
-        child: _getWidgetOptions(context).elementAt(_selectedIndex),
+        child: <Widget>[
+          ListPendingTransactions(
+            onSelect: (PendingTransaction pendingTransaction) {
+              Navigator.of(context).push(MaterialPageRoute<void>(
+                builder: (BuildContext context) {
+                  return ViewPendingTransaction(
+                    pendingTransaction: pendingTransaction,
+                  );
+                },
+              ));
+            },
+            listPendingTransactionsController:
+                _listPendingTransactionsController,
+          ),
+          ListParticipants(
+            onSelect: (Participant participant) {
+              Navigator.of(context).push(MaterialPageRoute<void>(
+                builder: (BuildContext context) {
+                  return ViewParticipant(
+                    participant: participant,
+                  );
+                },
+              ));
+            },
+            listParticipantsController: _listParticipantsController,
+          ),
+          ListOrganizations(
+            onSelect: (Organization organization) {
+              Navigator.of(context).push(MaterialPageRoute<void>(
+                builder: (BuildContext context) {
+                  return ViewOrganization(
+                    organization: organization,
+                  );
+                },
+              ));
+            },
+            listOrganizationsController: _listOrganizationsController,
+          ),
+        ].elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -143,7 +156,6 @@ class _AppHomeState extends State<AppHome> {
                 return CreatePendingTransaction(
                   onCreate: (PendingTransaction pendingTransaction) {
                     navigator.pop();
-                    // todo - refresh the blocks list
                     scaffoldMessenger.showSnackBar(const SnackBar(
                       content: Text('Pending Transaction Created'),
                     ));
@@ -157,7 +169,7 @@ class _AppHomeState extends State<AppHome> {
                 return EditParticipant(
                   onSubmit: (Participant? newParticipant) {
                     navigator.pop();
-                    // todo - refresh the participant list
+                    _listParticipantsController?.reset();
                     scaffoldMessenger.showSnackBar(const SnackBar(
                       content: Text('Participant Created'),
                     ));
@@ -171,7 +183,7 @@ class _AppHomeState extends State<AppHome> {
                 return EditOrganization(
                   onSubmit: (Organization? newOrganization) {
                     navigator.pop();
-                    // todo - refresh the organization list
+                    _listOrganizationsController?.reset();
                     scaffoldMessenger.showSnackBar(const SnackBar(
                       content: Text('Organization Created'),
                     ));

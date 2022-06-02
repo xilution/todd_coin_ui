@@ -3,7 +3,6 @@ import 'package:http/http.dart';
 import 'package:todd_coin_ui/brokers/auth_broker.dart';
 import 'package:todd_coin_ui/models/api/token.dart';
 import 'package:todd_coin_ui/models/domain/participant.dart';
-import 'package:todd_coin_ui/utilities/api_context.dart';
 import 'package:todd_coin_ui/utilities/app_context.dart';
 import 'package:validators/validators.dart';
 
@@ -94,8 +93,7 @@ class _LoginState extends State<Login> {
                           NavigatorState navigator = Navigator.of(context);
                           ScaffoldMessengerState scaffoldMessenger =
                               ScaffoldMessenger.of(context);
-                          String baseUrl =
-                              await ApiContext.getBaseUrl(navigator);
+                          String baseUrl = await AppContext.getBaseUrl();
                           AuthBroker authBroker = AuthBroker(Client(), baseUrl);
 
                           try {

@@ -4,6 +4,7 @@ import 'package:todd_coin_ui/brokers/pending_transaction_broker.dart';
 import 'package:todd_coin_ui/models/api/token.dart';
 import 'package:todd_coin_ui/models/domain/pending_transaction.dart';
 import 'package:todd_coin_ui/utilities/api_context.dart';
+import 'package:todd_coin_ui/utilities/app_context.dart';
 
 class EditPendingTransaction extends StatefulWidget {
   final PendingTransaction? existingPendingTransaction;
@@ -184,8 +185,7 @@ class _EditPendingTransactionState extends State<EditPendingTransaction> {
                             ScaffoldMessengerState scaffoldMessenger =
                                 ScaffoldMessenger.of(context);
 
-                            String baseUrl =
-                                await ApiContext.getBaseUrl(navigator);
+                            String baseUrl = await AppContext.getBaseUrl();
                             Token token =
                                 await ApiContext.getToken(navigator, baseUrl);
                             PendingTransaction updatedPendingTransaction =

@@ -4,6 +4,7 @@ import 'package:todd_coin_ui/brokers/participant_broker.dart';
 import 'package:todd_coin_ui/models/api/token.dart';
 import 'package:todd_coin_ui/models/domain/participant.dart';
 import 'package:todd_coin_ui/utilities/api_context.dart';
+import 'package:todd_coin_ui/utilities/app_context.dart';
 
 class EditParticipant extends StatefulWidget {
   final Participant? existingParticipant;
@@ -87,8 +88,7 @@ class _EditParticipantState extends State<EditParticipant> {
                           NavigatorState navigator = Navigator.of(context);
                           ScaffoldMessengerState scaffoldMessenger =
                               ScaffoldMessenger.of(context);
-                          String baseUrl =
-                              await ApiContext.getBaseUrl(navigator);
+                          String baseUrl = await AppContext.getBaseUrl();
 
                           if (widget.existingParticipant != null) {
                             Token token =

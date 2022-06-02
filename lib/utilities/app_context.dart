@@ -11,10 +11,16 @@ class AppContext {
     await prefs.setString('baseUrl', baseUrl);
   }
 
-  static Future<String?> getBaseUrl() async {
+  static Future<String> getBaseUrl() async {
     final prefs = await SharedPreferences.getInstance();
 
-    return prefs.getString('baseUrl');
+    String? baseUrl = prefs.getString('baseUrl');
+    if (baseUrl == null) {
+      baseUrl = "http://localhost:3000";
+      await prefs.setString('baseUrl', baseUrl);
+    }
+
+    return baseUrl;
   }
 
   static Future<void> setToken(Token token) async {
