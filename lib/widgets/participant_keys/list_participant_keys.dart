@@ -47,6 +47,7 @@ class _ListParticipantKeysState extends State<ListParticipantKeys> {
       child: PagewiseListView<ParticipantKey>(
         padding: const EdgeInsets.all(15.0),
         itemBuilder: (context, participant, index) {
+          // todo - indicate the keys that don't have a locally saved private key
           return ListTile(
             title: Text(
               participant.id!.substring(0, 8),

@@ -5,7 +5,6 @@ import 'package:http/http.dart';
 import 'package:todd_coin_ui/brokers/local_storage_broker.dart';
 import 'package:todd_coin_ui/brokers/signed_transaction_broker.dart';
 import 'package:todd_coin_ui/models/api/token.dart';
-import 'package:todd_coin_ui/models/domain/enums.dart';
 import 'package:todd_coin_ui/models/domain/participant.dart';
 import 'package:todd_coin_ui/models/domain/participant_key.dart';
 import 'package:todd_coin_ui/models/domain/pending_transaction.dart';
@@ -102,7 +101,7 @@ class _SignPendingTransactionState extends State<SignPendingTransaction> {
                     print(privateKey);
 
                     String publicKey =
-                    storedParticipantKey?.publicKey as String;
+                        storedParticipantKey?.publicKey as String;
 
                     print("***** public key *****");
                     print(publicKey);
@@ -124,7 +123,8 @@ class _SignPendingTransactionState extends State<SignPendingTransaction> {
                     print("***** signed transaction *****");
                     print(json.encode(signedTransaction.toJson()));
 
-                    String hashHex = calculateTransactionHash(signedTransaction);
+                    String hashHex =
+                        calculateTransactionHash(signedTransaction);
 
                     print("***** hashHex *****");
                     print(hashHex);

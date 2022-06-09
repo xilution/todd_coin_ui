@@ -59,10 +59,14 @@ void main() {
         test('should return the correct response', () {
           SignedTransaction signedTransaction = SignedTransaction(
               id: "852a592a-ed11-4082-9f3e-57559227351a",
-              fromParticipant: Participant(id: "09cbccd1-b974-4b95-9929-8af02833d584"),
-              toParticipant: Participant(id: "b871e4af-5329-47be-8922-47638de3bddd"),
-              fromOrganization: Organization(id: "ea75c11a-2a16-4ff6-b81a-e4721ca265c1"),
-              toOrganization: Organization(id: "28631269-144f-4d11-83fe-92875b742e5d"),
+              fromParticipant:
+                  Participant(id: "09cbccd1-b974-4b95-9929-8af02833d584"),
+              toParticipant:
+                  Participant(id: "b871e4af-5329-47be-8922-47638de3bddd"),
+              fromOrganization:
+                  Organization(id: "ea75c11a-2a16-4ff6-b81a-e4721ca265c1"),
+              toOrganization:
+                  Organization(id: "28631269-144f-4d11-83fe-92875b742e5d"),
               description: "The quick red fox jumped over the lazy brown dog.",
               details: TimeTransactionDetails(dateRanges: [
                 DateRange(

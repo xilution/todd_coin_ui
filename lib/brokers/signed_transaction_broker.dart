@@ -64,7 +64,8 @@ class SignedTransactionBroker {
 
   Future<SignedTransaction> createSignedTransaction(
       String accessToken, SignedTransaction newSignedTransaction) async {
-    String encode = json.encode(CreateOrUpdateOneRequest(newSignedTransaction.toJson()));
+    String encode =
+        json.encode(CreateOrUpdateOneRequest(newSignedTransaction.toJson()));
     print(encode);
     final response = await client.post(
       Uri.parse('$baseUrl/signed-transactions'),
@@ -72,8 +73,7 @@ class SignedTransactionBroker {
         'content-type': 'application/json',
         'authorization': 'Bearer $accessToken',
       },
-      body:
-          encode,
+      body: encode,
     );
 
     print(response.statusCode);

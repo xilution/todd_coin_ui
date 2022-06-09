@@ -89,10 +89,9 @@ void main() {
       final NodeBroker nodeBroker = NodeBroker(client, baseUrl);
 
       when(client
-          .get(Uri.parse('$baseUrl/nodes/$nodeId'),
-          headers: <String, String>{
-            'content-type': 'application/json',
-          })).thenAnswer((_) async => http.Response("""
+          .get(Uri.parse('$baseUrl/nodes/$nodeId'), headers: <String, String>{
+        'content-type': 'application/json',
+      })).thenAnswer((_) async => http.Response("""
           {
             "jsonapi": {
               "version": "1.0"
@@ -134,11 +133,7 @@ void main() {
       final DateTime createdAt = DateTime.parse("2022-05-12T01:53:29.970Z");
       final DateTime updatedAt = DateTime.parse("2022-05-12T01:54:29.970Z");
       final Node newNode = Node(
-        id: id,
-        createdAt: createdAt,
-        updatedAt: updatedAt,
-        baseUrl: baseUrl
-      );
+          id: id, createdAt: createdAt, updatedAt: updatedAt, baseUrl: baseUrl);
       final NodeBroker nodeBroker = NodeBroker(client, baseUrl);
 
       when(client.post(Uri.parse('$baseUrl/nodes'),
@@ -189,11 +184,7 @@ void main() {
       final DateTime createdAt = DateTime.parse("2022-05-12T01:53:29.970Z");
       final DateTime updatedAt = DateTime.parse("2022-05-12T01:54:29.970Z");
       final Node updatedNode = Node(
-          id: id,
-          createdAt: createdAt,
-          updatedAt: updatedAt,
-          baseUrl: baseUrl
-      );
+          id: id, createdAt: createdAt, updatedAt: updatedAt, baseUrl: baseUrl);
       final NodeBroker nodeBroker = NodeBroker(client, baseUrl);
 
       when(client.patch(Uri.parse('$baseUrl/nodes/${updatedNode.id}'),

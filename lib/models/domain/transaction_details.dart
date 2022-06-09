@@ -26,16 +26,21 @@ class TimeTransactionDetails {
     TimeTransactionDetails copy = this.copy();
 
     copy.dateRanges.sort((DateRange dateRange1, DateRange dateRange2) {
-      int fromDiff = (dateRange1.from?.millisecondsSinceEpoch ?? 0) - (dateRange2.from?.millisecondsSinceEpoch ?? 0);
+      int fromDiff = (dateRange1.from?.millisecondsSinceEpoch ?? 0) -
+          (dateRange2.from?.millisecondsSinceEpoch ?? 0);
 
       if (fromDiff != 0) {
         return fromDiff;
       }
 
-      return (dateRange1.to?.millisecondsSinceEpoch ?? 0) - (dateRange2.to?.millisecondsSinceEpoch ?? 0);
+      return (dateRange1.to?.millisecondsSinceEpoch ?? 0) -
+          (dateRange2.to?.millisecondsSinceEpoch ?? 0);
     });
 
-    String joinedParts = copy.dateRanges.map((DateRange dateRange) => dateRange.hash()).toList().join();
+    String joinedParts = copy.dateRanges
+        .map((DateRange dateRange) => dateRange.hash())
+        .toList()
+        .join();
 
     return sha256.convert(utf8.encode(joinedParts)).toString();
   }

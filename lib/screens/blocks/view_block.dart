@@ -52,7 +52,8 @@ class _ViewBlockState extends State<ViewBlock> {
                         builder: (BuildContext context) {
                           return ViewBlockTransactions(
                             onSelect: (BlockTransaction blockTransaction) {
-                              Navigator.of(context).push(MaterialPageRoute<void>(
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute<void>(
                                 builder: (BuildContext context) {
                                   return ViewBlockTransaction(
                                     blockTransaction: blockTransaction,
