@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:todd_coin_ui/brokers/local_storage_broker.dart';
+import 'package:todd_coin_ui/models/domain/block.dart';
 import 'package:todd_coin_ui/models/domain/organization.dart';
 import 'package:todd_coin_ui/models/domain/participant.dart';
 import 'package:todd_coin_ui/models/domain/pending_transaction.dart';
-import 'package:todd_coin_ui/screens/organizations/edit_organization.dart';
+import 'package:todd_coin_ui/models/domain/signed_transaction.dart';
+import 'package:todd_coin_ui/screens/blocks/view_block.dart';
 import 'package:todd_coin_ui/screens/organizations/view_organization.dart';
-import 'package:todd_coin_ui/screens/participants/edit_participant.dart';
 import 'package:todd_coin_ui/screens/participants/view_participant.dart';
 import 'package:todd_coin_ui/screens/pending_transactions/create_pending_transaction.dart';
+import 'package:todd_coin_ui/screens/pending_transactions/view_pending_transaction.dart';
 import 'package:todd_coin_ui/screens/settings/edit_settings.dart';
+import 'package:todd_coin_ui/screens/signed_transactions/view_signed_transaction.dart';
 import 'package:todd_coin_ui/utilities/app_context.dart';
+import 'package:todd_coin_ui/widgets/blocks/list_blocks.dart';
 import 'package:todd_coin_ui/widgets/organizations/list_organizations.dart';
 import 'package:todd_coin_ui/widgets/participants/list_participants.dart';
-
-import 'screens/pending_transactions/view_pending_transactions.dart';
-import 'widgets/pending_transactions/list_pending_transactions.dart';
+import 'package:todd_coin_ui/widgets/pending_transactions/list_pending_transactions.dart';
+import 'package:todd_coin_ui/widgets/signed_transactions/list_signed_transactions.dart';
 
 const String _title = 'Todd Coin';
 
@@ -36,9 +40,12 @@ class AppHome extends StatefulWidget {
   State<AppHome> createState() => _AppHomeState();
 }
 
-class _AppHomeState extends State<AppHome> {
+class _AppHomeState extends State<AppHome> with TickerProviderStateMixin {
+  late TabController _tabController;
   int _selectedIndex = 0;
   ListPendingTransactionsController? _listPendingTransactionsController;
+  ListSignedTransactionsController? _listSignedTransactionsController;
+  ListBlocksController? _listBlocksController;
   ListParticipantsController? _listParticipantsController;
   ListOrganizationsController? _listOrganizationsController;
 
@@ -52,10 +59,15 @@ class _AppHomeState extends State<AppHome> {
   void initState() {
     super.initState();
 
-    AppContext.getBaseUrl().then((String baseUrl) {
+    _tabController = TabController(length: 3, vsync: this);
+
+    LocalStorageBroker.getBaseUrl().then((String baseUrl) {
       setState(() {
         _listPendingTransactionsController =
             ListPendingTransactionsController(baseUrl: baseUrl);
+        _listSignedTransactionsController =
+            ListSignedTransactionsController(baseUrl: baseUrl);
+        _listBlocksController = ListBlocksController(baseUrl: baseUrl);
         _listParticipantsController =
             ListParticipantsController(baseUrl: baseUrl);
         _listOrganizationsController =
@@ -69,6 +81,19 @@ class _AppHomeState extends State<AppHome> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(_title),
+        bottom: _selectedIndex == 0
+            ? TabBar(controller: _tabController, tabs: const <Widget>[
+                Tab(
+                  text: 'Pending Txs',
+                ),
+                Tab(
+                  text: 'Signed Txs',
+                ),
+                Tab(
+                  text: 'Blocks',
+                ),
+              ])
+            : null,
         actions: <Widget>[
           IconButton(
               icon: const Icon(Icons.settings),
@@ -82,22 +107,63 @@ class _AppHomeState extends State<AppHome> {
                   },
                 ));
               }),
+          IconButton(
+              icon: const Icon(Icons.person),
+              onPressed: () async {
+                final navigator = Navigator.of(context);
+                Participant user = await AppContext.getUser(navigator);
+                navigator.push(MaterialPageRoute<void>(
+                  builder: (BuildContext context) {
+                    return ViewParticipant(participant: user);
+                  },
+                ));
+              }),
         ],
       ),
       body: Center(
         child: <Widget>[
-          ListPendingTransactions(
-            onSelect: (PendingTransaction pendingTransaction) {
-              Navigator.of(context).push(MaterialPageRoute<void>(
-                builder: (BuildContext context) {
-                  return ViewPendingTransaction(
-                    pendingTransaction: pendingTransaction,
-                  );
+          TabBarView(
+            controller: _tabController,
+            children: <Widget>[
+              ListPendingTransactions(
+                onSelect: (PendingTransaction pendingTransaction) {
+                  Navigator.of(context).push(MaterialPageRoute<void>(
+                    builder: (BuildContext context) {
+                      return ViewPendingTransaction(
+                        pendingTransaction: pendingTransaction,
+                      );
+                    },
+                  ));
                 },
-              ));
-            },
-            listPendingTransactionsController:
-                _listPendingTransactionsController,
+                listPendingTransactionsController:
+                    _listPendingTransactionsController,
+              ),
+              ListSignedTransactions(
+                onSelect: (SignedTransaction signedTransaction) {
+                  Navigator.of(context).push(MaterialPageRoute<void>(
+                    builder: (BuildContext context) {
+                      return ViewSignedTransaction(
+                        signedTransaction: signedTransaction,
+                      );
+                    },
+                  ));
+                },
+                listSignedTransactionsController:
+                    _listSignedTransactionsController,
+              ),
+              ListBlocks(
+                onSelect: (Block block) {
+                  Navigator.of(context).push(MaterialPageRoute<void>(
+                    builder: (BuildContext context) {
+                      return ViewBlock(
+                        block: block,
+                      );
+                    },
+                  ));
+                },
+                listBlocksController: _listBlocksController,
+              ),
+            ],
           ),
           ListParticipants(
             onSelect: (Participant participant) {
@@ -144,57 +210,32 @@ class _AppHomeState extends State<AppHome> {
         onTap: _onItemTapped,
       ),
       floatingActionButton: Visibility(
+          visible: _selectedIndex == 0,
           child: FloatingActionButton(
-        onPressed: () async {
-          NavigatorState navigator = Navigator.of(context);
-          ScaffoldMessengerState scaffoldMessenger =
-              ScaffoldMessenger.of(context);
-
-          if (_selectedIndex == 0) {
-            navigator.push(MaterialPageRoute<void>(
-              builder: (BuildContext context) {
-                return CreatePendingTransaction(
-                  onCreate: (PendingTransaction pendingTransaction) {
-                    navigator.pop();
-                    scaffoldMessenger.showSnackBar(const SnackBar(
-                      content: Text('Pending Transaction Created'),
-                    ));
+            onPressed: () async {
+              if (_selectedIndex == 0) {
+                NavigatorState navigator = Navigator.of(context);
+                ScaffoldMessengerState scaffoldMessenger =
+                    ScaffoldMessenger.of(context);
+                Participant user = await AppContext.getUser(navigator);
+                navigator.push(MaterialPageRoute<void>(
+                  builder: (BuildContext context) {
+                    return CreatePendingTransaction(
+                      onCreate: (PendingTransaction pendingTransaction) {
+                        navigator.pop();
+                        _listPendingTransactionsController?.reset();
+                        scaffoldMessenger.showSnackBar(const SnackBar(
+                          content: Text('Pending Transaction Created'),
+                        ));
+                      },
+                      participant: user,
+                    );
                   },
-                );
-              },
-            ));
-          } else if (_selectedIndex == 1) {
-            navigator.push(MaterialPageRoute<void>(
-              builder: (BuildContext context) {
-                return EditParticipant(
-                  onSubmit: (Participant? newParticipant) {
-                    navigator.pop();
-                    _listParticipantsController?.reset();
-                    scaffoldMessenger.showSnackBar(const SnackBar(
-                      content: Text('Participant Created'),
-                    ));
-                  },
-                );
-              },
-            ));
-          } else if (_selectedIndex == 2) {
-            navigator.push(MaterialPageRoute<void>(
-              builder: (BuildContext context) {
-                return EditOrganization(
-                  onSubmit: (Organization? newOrganization) {
-                    navigator.pop();
-                    _listOrganizationsController?.reset();
-                    scaffoldMessenger.showSnackBar(const SnackBar(
-                      content: Text('Organization Created'),
-                    ));
-                  },
-                );
-              },
-            ));
-          }
-        },
-        child: const Icon(Icons.add),
-      )),
+                ));
+              }
+            },
+            child: const Icon(Icons.add),
+          )),
     );
   }
 }

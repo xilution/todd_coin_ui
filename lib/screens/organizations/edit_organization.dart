@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:todd_coin_ui/brokers/local_storage_broker.dart';
 import 'package:todd_coin_ui/brokers/organization_broker.dart';
 import 'package:todd_coin_ui/models/api/token.dart';
 import 'package:todd_coin_ui/models/domain/organization.dart';
-import 'package:todd_coin_ui/utilities/api_context.dart';
 import 'package:todd_coin_ui/utilities/app_context.dart';
 
 class EditOrganization extends StatefulWidget {
   final Organization? existingOrganization;
-  final void Function(Organization? organization) onSubmit;
+  final void Function(Organization organization) onSubmit;
 
   const EditOrganization(
       {Key? key, this.existingOrganization, required this.onSubmit})
@@ -73,9 +73,9 @@ class _EditOrganizationState extends State<EditOrganization> {
                           NavigatorState navigator = Navigator.of(context);
                           ScaffoldMessengerState scaffoldMessenger =
                               ScaffoldMessenger.of(context);
-                          String baseUrl = await AppContext.getBaseUrl();
-                          Token token =
-                              await ApiContext.getToken(navigator, baseUrl);
+                          String baseUrl =
+                              await LocalStorageBroker.getBaseUrl();
+                          Token token = await AppContext.getToken(navigator);
 
                           if (widget.existingOrganization != null) {
                             Organization updatedOrganization =

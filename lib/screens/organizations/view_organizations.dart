@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:todd_coin_ui/brokers/local_storage_broker.dart';
 import 'package:todd_coin_ui/models/domain/organization.dart';
 import 'package:todd_coin_ui/models/domain/participant.dart';
-import 'package:todd_coin_ui/utilities/app_context.dart';
 import 'package:todd_coin_ui/widgets/organizations/list_organizations.dart';
 
 class ViewOrganizations extends StatefulWidget {
@@ -22,7 +22,7 @@ class _ViewOrganizationsState extends State<ViewOrganizations> {
   void initState() {
     super.initState();
 
-    AppContext.getBaseUrl().then((String baseUrl) {
+    LocalStorageBroker.getBaseUrl().then((String baseUrl) {
       setState(() {
         _listOrganizationsController =
             ListOrganizationsController(baseUrl: baseUrl);

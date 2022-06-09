@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:todd_coin_ui/brokers/local_storage_broker.dart';
 import 'package:todd_coin_ui/models/domain/organization.dart';
-import 'package:todd_coin_ui/utilities/app_context.dart';
+import 'package:todd_coin_ui/models/domain/participant.dart';
+import 'package:todd_coin_ui/screens/participants/edit_participant.dart';
 import 'package:todd_coin_ui/widgets/participants/list_participants.dart';
-
-import '../../models/domain/participant.dart';
 
 class SelectParticipant extends StatefulWidget {
   final void Function(Participant participant) onSelect;
@@ -23,7 +23,7 @@ class _SelectParticipantState extends State<SelectParticipant> {
   void initState() {
     super.initState();
 
-    AppContext.getBaseUrl().then((String baseUrl) {
+    LocalStorageBroker.getBaseUrl().then((String baseUrl) {
       setState(() {
         _listParticipantsController =
             ListParticipantsController(baseUrl: baseUrl);
@@ -43,7 +43,21 @@ class _SelectParticipantState extends State<SelectParticipant> {
       ),
       floatingActionButton: Visibility(
           child: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          NavigatorState navigator = Navigator.of(context);
+          navigator.push(MaterialPageRoute<void>(
+            builder: (BuildContext context) {
+              return EditParticipant(
+                onSubmit: (Participant participant) {
+                  setState(() {
+                    _listParticipantsController?.reset();
+                  });
+                  navigator.pop();
+                },
+              );
+            },
+          ));
+        },
         child: const Icon(Icons.add),
       )),
     );

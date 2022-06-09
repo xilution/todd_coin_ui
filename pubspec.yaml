@@ -34,6 +34,9 @@ dependencies:
   date_format: ^2.0.6
   intl: ^0.17.0
   jwt_decoder: ^2.0.1
+  elliptic: ^0.3.8
+  ecdsa: ^0.0.4
+  crypto: ^3.0.2
   flutter:
     sdk: flutter
 

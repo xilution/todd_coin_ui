@@ -23,6 +23,9 @@ class PendingTransactionBroker {
           'content-type': 'application/json',
         });
 
+    print(response.statusCode);
+    print(response.body);
+
     if (response.statusCode == 200) {
       FetchManyResponse fetchManyResponse =
           FetchManyResponse.fromJson(json.decode(response.body));
@@ -46,6 +49,9 @@ class PendingTransactionBroker {
           'content-type': 'application/json',
         });
 
+    print(response.statusCode);
+    print(response.body);
+
     if (response.statusCode == 200) {
       FetchOneResponse fetchOneResponse =
           FetchOneResponse.fromJson(json.decode(response.body));
@@ -68,14 +74,15 @@ class PendingTransactionBroker {
           json.encode(CreateOrUpdateOneRequest(newPendingTransaction.toJson())),
     );
 
+    print(response.statusCode);
+    print(response.body);
+
     if (response.statusCode == 201) {
       FetchOneResponse fetchOneResponse =
           FetchOneResponse.fromJson(json.decode(response.body));
 
       return PendingTransaction.fromJson(fetchOneResponse.data);
     } else {
-      print(response.statusCode);
-      print(response.body);
       throw Exception('Failed to create a pendingTransaction');
     }
   }
@@ -92,6 +99,9 @@ class PendingTransactionBroker {
       body: json
           .encode(CreateOrUpdateOneRequest(updatedPendingTransaction.toJson())),
     );
+
+    print(response.statusCode);
+    print(response.body);
 
     if (response.statusCode == 204) {
       return;
@@ -110,6 +120,9 @@ class PendingTransactionBroker {
         'authorization': 'Bearer $accessToken',
       },
     );
+
+    print(response.statusCode);
+    print(response.body);
 
     if (response.statusCode == 204) {
       return;

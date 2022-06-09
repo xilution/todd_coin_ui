@@ -49,7 +49,7 @@ class _ListBlockTransactionsState extends State<ListBlockTransactions> {
         itemBuilder: (context, blockTransaction, index) {
           return ListTile(
             title: Text(
-              blockTransaction.id ?? "Unknown",
+              blockTransaction.id!.substring(0, 8),
               style: const TextStyle(fontSize: 18),
             ),
             onTap: () {
@@ -63,6 +63,10 @@ class _ListBlockTransactionsState extends State<ListBlockTransactions> {
               : Text(
                   'No block transactions found for ${widget.listBlockTransactionsController?.block.id}');
         },
+        errorBuilder: (context, error) {
+          return Text('Error: $error');
+        },
+        showRetry: false,
         pageLoadController: widget.listBlockTransactionsController != null
             ? widget.listBlockTransactionsController?.pagewiseLoadController
             : PagewiseLoadController(

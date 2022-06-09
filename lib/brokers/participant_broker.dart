@@ -24,6 +24,9 @@ class ParticipantBroker {
           'content-type': 'application/json',
         });
 
+    print(response.statusCode);
+    print(response.body);
+
     if (response.statusCode == 200) {
       FetchManyResponse fetchManyResponse =
           FetchManyResponse.fromJson(json.decode(response.body));
@@ -46,6 +49,9 @@ class ParticipantBroker {
         headers: <String, String>{
           'content-type': 'application/json',
         });
+
+    print(response.statusCode);
+    print(response.body);
 
     if (response.statusCode == 200) {
       FetchManyResponse fetchManyResponse =
@@ -70,6 +76,9 @@ class ParticipantBroker {
           'content-type': 'application/json',
         });
 
+    print(response.statusCode);
+    print(response.body);
+
     if (response.statusCode == 200) {
       FetchManyResponse fetchManyResponse =
           FetchManyResponse.fromJson(json.decode(response.body));
@@ -93,6 +102,9 @@ class ParticipantBroker {
           'content-type': 'application/json',
         });
 
+    print(response.statusCode);
+    print(response.body);
+
     if (response.statusCode == 200) {
       FetchManyResponse fetchManyResponse =
           FetchManyResponse.fromJson(json.decode(response.body));
@@ -114,6 +126,9 @@ class ParticipantBroker {
           'content-type': 'application/json',
         });
 
+    print(response.statusCode);
+    print(response.body);
+
     if (response.statusCode == 200) {
       FetchOneResponse fetchOneResponse =
           FetchOneResponse.fromJson(json.decode(response.body));
@@ -132,6 +147,9 @@ class ParticipantBroker {
       },
       body: json.encode(CreateOrUpdateOneRequest(newParticipant.toJson())),
     );
+
+    print(response.statusCode);
+    print(response.body);
 
     if (response.statusCode == 201) {
       FetchOneResponse fetchOneResponse =
@@ -153,6 +171,9 @@ class ParticipantBroker {
       },
       body: json.encode(CreateOrUpdateOneRequest(updatedParticipant.toJson())),
     );
+
+    print(response.statusCode);
+    print(response.body);
 
     if (response.statusCode == 204) {
       return;

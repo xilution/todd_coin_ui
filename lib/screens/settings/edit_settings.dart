@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todd_coin_ui/utilities/app_context.dart';
+import 'package:todd_coin_ui/brokers/local_storage_broker.dart';
 import 'package:validators/validators.dart';
 
 class EditSettings extends StatefulWidget {
@@ -18,7 +18,7 @@ class _EditSettingsState extends State<EditSettings> {
 
   @override
   void initState() {
-    AppContext.getBaseUrl().then((String? baseUrl) {
+    LocalStorageBroker.getBaseUrl().then((String? baseUrl) {
       setState(() {
         _baseUrl = baseUrl ?? "http://localhost:3000";
       });
@@ -70,7 +70,7 @@ class _EditSettingsState extends State<EditSettings> {
                         ScaffoldMessenger.of(context);
 
                     try {
-                      await AppContext.setBaseUrl(_baseUrl);
+                      await LocalStorageBroker.setBaseUrl(_baseUrl);
 
                       widget.onSave(_baseUrl);
                     } catch (error) {

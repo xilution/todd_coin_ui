@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pagewise/flutter_pagewise.dart';
+import 'package:todd_coin_ui/models/domain/organization.dart';
 import 'package:todd_coin_ui/models/domain/participant.dart';
 import 'package:todd_coin_ui/utilities/data_helpers.dart';
-
-import '../../models/domain/organization.dart';
 
 class ListOrganizations extends StatefulWidget {
   final ListOrganizationsController? listOrganizationsController;
@@ -64,6 +63,10 @@ class _ListOrganizationsState extends State<ListOrganizations> {
               : Text(
                   'No organizations found for ${widget.listOrganizationsController?.participant?.email}');
         },
+        errorBuilder: (context, error) {
+          return Text('Error: $error');
+        },
+        showRetry: false,
         pageLoadController: widget.listOrganizationsController != null
             ? widget.listOrganizationsController?.pagewiseLoadController
             : PagewiseLoadController(

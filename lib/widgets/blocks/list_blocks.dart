@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pagewise/flutter_pagewise.dart';
+import 'package:todd_coin_ui/models/domain/block.dart';
 import 'package:todd_coin_ui/utilities/data_helpers.dart';
-
-import '../../models/domain/block.dart';
 
 class ListBlocks extends StatefulWidget {
   final ListBlocksController? listBlocksController;
@@ -26,7 +25,8 @@ class ListBlocksController {
     pagewiseLoadController = PagewiseLoadController<Block>(
         pageSize: 10,
         pageFuture: (pageIndex) async {
-          return loadBlocks(baseUrl, pageIndex, 10);
+          var loadBlocks2 = loadBlocks(baseUrl, pageIndex, 10);
+          return loadBlocks2;
         });
   }
 
@@ -47,7 +47,7 @@ class _ListBlocksState extends State<ListBlocks> {
         itemBuilder: (context, block, index) {
           return ListTile(
             title: Text(
-              block.id,
+              block.id.substring(0, 8),
               style: const TextStyle(fontSize: 18),
             ),
             onTap: () {
@@ -58,6 +58,10 @@ class _ListBlocksState extends State<ListBlocks> {
         noItemsFoundBuilder: (context) {
           return const Text('No blocks found.');
         },
+        errorBuilder: (context, error) {
+          return Text('Error: $error');
+        },
+        showRetry: false,
         pageLoadController: widget.listBlocksController != null
             ? widget.listBlocksController?.pagewiseLoadController
             : PagewiseLoadController(

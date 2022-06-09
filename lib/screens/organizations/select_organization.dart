@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:todd_coin_ui/brokers/local_storage_broker.dart';
+import 'package:todd_coin_ui/models/domain/organization.dart';
 import 'package:todd_coin_ui/models/domain/participant.dart';
-import 'package:todd_coin_ui/utilities/app_context.dart';
+import 'package:todd_coin_ui/screens/organizations/edit_organization.dart';
 import 'package:todd_coin_ui/widgets/organizations/list_organizations.dart';
-
-import '../../models/domain/organization.dart';
 
 class SelectOrganization extends StatefulWidget {
   final void Function(Organization organization) onSelect;
@@ -23,7 +23,7 @@ class _SelectOrganizationState extends State<SelectOrganization> {
   void initState() {
     super.initState();
 
-    AppContext.getBaseUrl().then((String baseUrl) {
+    LocalStorageBroker.getBaseUrl().then((String baseUrl) {
       setState(() {
         _listOrganizationsController =
             ListOrganizationsController(baseUrl: baseUrl);
@@ -43,7 +43,21 @@ class _SelectOrganizationState extends State<SelectOrganization> {
       ),
       floatingActionButton: Visibility(
           child: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          NavigatorState navigator = Navigator.of(context);
+          navigator.push(MaterialPageRoute<void>(
+            builder: (BuildContext context) {
+              return EditOrganization(
+                onSubmit: (Organization organization) {
+                  setState(() {
+                    _listOrganizationsController?.reset();
+                  });
+                  navigator.pop();
+                },
+              );
+            },
+          ));
+        },
         child: const Icon(Icons.add),
       )),
     );

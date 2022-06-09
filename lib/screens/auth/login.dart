@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:todd_coin_ui/brokers/auth_broker.dart';
+import 'package:todd_coin_ui/brokers/local_storage_broker.dart';
 import 'package:todd_coin_ui/models/api/token.dart';
 import 'package:todd_coin_ui/models/domain/participant.dart';
-import 'package:todd_coin_ui/utilities/app_context.dart';
 import 'package:validators/validators.dart';
 
 class Login extends StatefulWidget {
@@ -22,6 +22,19 @@ class _LoginState extends State<Login> {
 
   String _email = "";
   String _password = "";
+
+  @override
+  void initState() {
+    super.initState();
+
+    LocalStorageBroker.getUser().then((Participant? user) {
+      if (user != null) {
+        setState(() {
+          _email = user.email ?? "";
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,19 +103,19 @@ class _LoginState extends State<Login> {
                     child: ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          NavigatorState navigator = Navigator.of(context);
                           ScaffoldMessengerState scaffoldMessenger =
                               ScaffoldMessenger.of(context);
-                          String baseUrl = await AppContext.getBaseUrl();
+                          String baseUrl =
+                              await LocalStorageBroker.getBaseUrl();
                           AuthBroker authBroker = AuthBroker(Client(), baseUrl);
 
                           try {
                             Token token =
                                 await authBroker.fetchToken(_email, _password);
-                            await AppContext.setToken(token);
+                            await LocalStorageBroker.setToken(token);
                             Participant user =
                                 await authBroker.fetchUserInfo(token.access);
-                            await AppContext.setUser(user);
+                            await LocalStorageBroker.setUser(user);
 
                             widget.onLogin(user, token);
                           } catch (error) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
+import 'package:todd_coin_ui/brokers/local_storage_broker.dart';
 import 'package:todd_coin_ui/brokers/pending_transaction_broker.dart';
 import 'package:todd_coin_ui/models/api/token.dart';
 import 'package:todd_coin_ui/models/domain/date_range.dart';
@@ -12,13 +13,14 @@ import 'package:todd_coin_ui/models/domain/transaction_details.dart';
 import 'package:todd_coin_ui/screens/date_ranges/select_date_range.dart';
 import 'package:todd_coin_ui/screens/organizations/select_organization.dart';
 import 'package:todd_coin_ui/screens/participants/select_participant.dart';
-import 'package:todd_coin_ui/utilities/api_context.dart';
 import 'package:todd_coin_ui/utilities/app_context.dart';
 
 class CreatePendingTransaction extends StatefulWidget {
   final void Function(PendingTransaction pendingTransaction) onCreate;
+  final Participant participant;
 
-  const CreatePendingTransaction({Key? key, required this.onCreate})
+  const CreatePendingTransaction(
+      {Key? key, required this.onCreate, required this.participant})
       : super(key: key);
 
   @override
@@ -28,28 +30,18 @@ class CreatePendingTransaction extends StatefulWidget {
 
 class _CreatePendingTransactionState extends State<CreatePendingTransaction> {
   final _formKey = GlobalKey<FormState>();
+  final stepCount = 5;
 
   int _index = 0;
   String? _description;
-  Participant? _toParticipant;
   Organization? _toOrganization;
   Participant? _fromParticipant;
   Organization? _fromOrganization;
   String? _transactionType = "TIME";
   DateRange? _dateRange;
 
-  void _loadToParticipant() {
-    AppContext.getUser().then((Participant? participant) {
-      if (participant != null) {
-        _toParticipant = participant;
-      }
-    });
-  }
-
   @override
   void initState() {
-    _loadToParticipant();
-
     super.initState();
   }
 
@@ -70,7 +62,7 @@ class _CreatePendingTransactionState extends State<CreatePendingTransaction> {
               children: <TextButton>[
                 TextButton(
                   onPressed: () {
-                    if (_index < 5) {
+                    if (_index < stepCount) {
                       setState(() {
                         _index += 1;
                       });
@@ -80,7 +72,7 @@ class _CreatePendingTransactionState extends State<CreatePendingTransaction> {
                 ),
               ],
             );
-          } else if (details.currentStep == 5) {
+          } else if (details.currentStep == stepCount) {
             return Row(
               children: <TextButton>[
                 TextButton(
@@ -98,14 +90,14 @@ class _CreatePendingTransactionState extends State<CreatePendingTransaction> {
                     NavigatorState navigator = Navigator.of(context);
                     ScaffoldMessengerState scaffoldMessenger =
                         ScaffoldMessenger.of(context);
-                    String baseUrl = await AppContext.getBaseUrl();
-                    Token token = await ApiContext.getToken(navigator, baseUrl);
+                    String baseUrl = await LocalStorageBroker.getBaseUrl();
+                    Token token = await AppContext.getToken(navigator);
 
                     PendingTransaction newPendingTransaction =
                         PendingTransaction(
                       fromParticipant: _fromParticipant,
                       fromOrganization: _fromOrganization,
-                      toParticipant: _toParticipant,
+                      toParticipant: widget.participant,
                       toOrganization: _toOrganization,
                       type: transactionTypeStrMap[_transactionType],
                       description: _description,
@@ -145,7 +137,7 @@ class _CreatePendingTransactionState extends State<CreatePendingTransaction> {
                 ),
                 TextButton(
                   onPressed: () {
-                    if (_index < 5) {
+                    if (_index < stepCount) {
                       setState(() {
                         _index += 1;
                       });
@@ -305,7 +297,7 @@ class _CreatePendingTransactionState extends State<CreatePendingTransaction> {
                                       });
                                       navigator.pop();
                                     },
-                                    participant: _toParticipant,
+                                    participant: widget.participant,
                                   );
                                 },
                               ));

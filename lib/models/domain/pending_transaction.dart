@@ -33,6 +33,16 @@ class PendingTransaction {
       : id = json['id'],
         createdAt = DateTime.parse(json['attributes']['createdAt']),
         updatedAt = DateTime.parse(json['attributes']['updatedAt']),
+        type = transactionTypeStrMap[json['attributes']['type']],
+        description = json['attributes']['description'],
+        details = TimeTransactionDetails(
+            dateRanges: json['attributes']['details']['dateRanges'] != null
+                ? (json['attributes']['details']['dateRanges'] as List<dynamic>)
+                    .map((dynamic dateRange) => DateRange(
+                        from: DateTime.parse(dateRange['from']),
+                        to: DateTime.parse(dateRange['to'])))
+                    .toList()
+                : []),
         fromParticipant =
             json['relationships']['fromParticipant']['data']?['id'] != null
                 ? Participant(
@@ -52,16 +62,7 @@ class PendingTransaction {
             json['relationships']['toOrganization']['data']?['id'] != null
                 ? Organization(
                     id: json['relationships']['toOrganization']['data']['id'])
-                : null,
-        type = transactionTypeStrMap[json['attributes']['type']],
-        description = json['attributes']['description'],
-        details = TimeTransactionDetails(
-            dateRanges:
-                (json['attributes']['details']['dateRanges'] as List<dynamic>)
-                    .map((dynamic dateRange) => DateRange(
-                        from: DateTime.parse(dateRange['from']),
-                        to: DateTime.parse(dateRange['to'])))
-                    .toList());
+                : null;
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> base = {
@@ -73,7 +74,7 @@ class PendingTransaction {
           'dateRanges': details?.dateRanges
               .map((DateRange dateRange) => {
                     'from': dateRange.from?.toIso8601String(),
-                    'to': dateRange.from?.toIso8601String()
+                    'to': dateRange.to?.toIso8601String()
                   })
               .toList(),
         }

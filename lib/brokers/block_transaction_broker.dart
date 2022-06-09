@@ -18,10 +18,13 @@ class BlockTransactionBroker {
       Block block, int pageNumber, int pageSize) async {
     final response = await client.get(
         Uri.parse(
-            '$baseUrl/blocks/${block.id}/block-transactions?page[number]=$pageNumber&page[size]=$pageSize'),
+            '$baseUrl/blocks/${block.id}/transactions?page[number]=$pageNumber&page[size]=$pageSize'),
         headers: <String, String>{
           'content-type': 'application/json',
         });
+
+    print(response.statusCode);
+    print(response.body);
 
     if (response.statusCode == 200) {
       FetchManyResponse fetchManyResponse =
@@ -42,10 +45,13 @@ class BlockTransactionBroker {
       Block block, String blockTransactionId) async {
     final response = await client.get(
         Uri.parse(
-            '$baseUrl/blocks/${block.id}/block-transactions/$blockTransactionId'),
+            '$baseUrl/blocks/${block.id}/transactions/$blockTransactionId'),
         headers: <String, String>{
           'content-type': 'application/json',
         });
+
+    print(response.statusCode);
+    print(response.body);
 
     if (response.statusCode == 200) {
       FetchOneResponse fetchOneResponse =

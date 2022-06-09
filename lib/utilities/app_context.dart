@@ -1,49 +1,42 @@
-import 'dart:convert';
-
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:todd_coin_ui/brokers/auth_broker.dart';
+import 'package:todd_coin_ui/brokers/local_storage_broker.dart';
 import 'package:todd_coin_ui/models/api/token.dart';
-
-import '../models/domain/participant.dart';
+import 'package:todd_coin_ui/models/domain/participant.dart';
+import 'package:todd_coin_ui/screens/auth/login.dart';
 
 class AppContext {
-  static Future<void> setBaseUrl(String baseUrl) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('baseUrl', baseUrl);
-  }
+  static Future<Token> getToken(NavigatorState navigator) async {
+    String baseUrl = await LocalStorageBroker.getBaseUrl();
+    Token? token = await LocalStorageBroker.getToken();
 
-  static Future<String> getBaseUrl() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    String? baseUrl = prefs.getString('baseUrl');
-    if (baseUrl == null) {
-      baseUrl = "http://localhost:3000";
-      await prefs.setString('baseUrl', baseUrl);
+    if (token == null || JwtDecoder.isExpired(token.access)) {
+      // todo - change to within 15 minutes of expiring.
+      token = await navigator.push(MaterialPageRoute(
+        builder: (BuildContext context) {
+          return Login(
+            baseUrl: baseUrl,
+            onLogin: (_, token) {
+              navigator.pop(token);
+            },
+          );
+        },
+      ));
     }
 
-    return baseUrl;
+    if (token == null) {
+      throw Error();
+    }
+
+    return token;
   }
 
-  static Future<void> setToken(Token token) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('token', json.encode(token.toJson()));
-  }
+  static Future<Participant> getUser(NavigatorState navigator) async {
+    String baseUrl = await LocalStorageBroker.getBaseUrl();
+    Token token = await AppContext.getToken(navigator);
 
-  static Future<Token?> getToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    String? string = prefs.getString('token');
-
-    return string == null ? null : Token.fromJson(json.decode(string));
-  }
-
-  static Future<void> setUser(Participant user) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('user', json.encode(user.toJson()));
-  }
-
-  static Future<Participant?> getUser() async {
-    final prefs = await SharedPreferences.getInstance();
-    String? string = prefs.getString('user');
-
-    return string == null ? null : Participant.fromJson(json.decode(string));
+    return await AuthBroker(Client(), baseUrl).fetchUserInfo(token.access);
   }
 }

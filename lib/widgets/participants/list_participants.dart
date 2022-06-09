@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pagewise/flutter_pagewise.dart';
 import 'package:todd_coin_ui/models/domain/organization.dart';
+import 'package:todd_coin_ui/models/domain/participant.dart';
 import 'package:todd_coin_ui/utilities/data_helpers.dart';
-
-import '../../models/domain/participant.dart';
 
 class ListParticipants extends StatefulWidget {
   final ListParticipantsController? listParticipantsController;
@@ -64,6 +63,10 @@ class _ListParticipantsState extends State<ListParticipants> {
               : Text(
                   'No participants found for ${widget.listParticipantsController?.organization?.name}');
         },
+        errorBuilder: (context, error) {
+          return Text('Error: $error');
+        },
+        showRetry: false,
         pageLoadController: widget.listParticipantsController != null
             ? widget.listParticipantsController?.pagewiseLoadController
             : PagewiseLoadController(

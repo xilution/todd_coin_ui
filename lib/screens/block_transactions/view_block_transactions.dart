@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:todd_coin_ui/brokers/local_storage_broker.dart';
 import 'package:todd_coin_ui/models/domain/block.dart';
 import 'package:todd_coin_ui/models/domain/block_transaction.dart';
-import 'package:todd_coin_ui/utilities/app_context.dart';
 import 'package:todd_coin_ui/widgets/block_transactions/list_block_transactions.dart';
 
 class ViewBlockTransactions extends StatefulWidget {
@@ -23,10 +23,10 @@ class _ViewBlockTransactionsState extends State<ViewBlockTransactions> {
   void initState() {
     super.initState();
 
-    AppContext.getBaseUrl().then((String baseUrl) {
+    LocalStorageBroker.getBaseUrl().then((String baseUrl) {
       setState(() {
-        _listBlockTransactionsController =
-            ListBlockTransactionsController(baseUrl: baseUrl, block: widget.block);
+        _listBlockTransactionsController = ListBlockTransactionsController(
+            baseUrl: baseUrl, block: widget.block);
       });
     });
   }

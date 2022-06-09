@@ -1,40 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:todd_coin_ui/brokers/local_storage_broker.dart';
 import 'package:todd_coin_ui/models/domain/pending_transaction.dart';
+import 'package:todd_coin_ui/widgets/pending_transactions/list_pending_transactions.dart';
 
-class ViewPendingTransaction extends StatefulWidget {
-  final PendingTransaction pendingTransaction;
+class ViewPendingTransactions extends StatefulWidget {
+  final void Function(PendingTransaction pendingTransaction) onSelect;
 
-  const ViewPendingTransaction({Key? key, required this.pendingTransaction})
+  const ViewPendingTransactions({Key? key, required this.onSelect})
       : super(key: key);
 
   @override
-  State<ViewPendingTransaction> createState() => _ViewPendingTransactionState();
+  State<ViewPendingTransactions> createState() =>
+      _ViewPendingTransactionsState();
 }
 
-class _ViewPendingTransactionState extends State<ViewPendingTransaction> {
+class _ViewPendingTransactionsState extends State<ViewPendingTransactions> {
+  ListPendingTransactionsController? _listPendingTransactionsController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    LocalStorageBroker.getBaseUrl().then((String baseUrl) {
+      setState(() {
+        _listPendingTransactionsController =
+            ListPendingTransactionsController(baseUrl: baseUrl);
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    PendingTransaction pendingTransaction = widget.pendingTransaction;
-
     return Scaffold(
-      appBar: AppBar(title: const Text('View a Pending Transaction')),
-      body: Container(
-        decoration: const BoxDecoration(color: Colors.white),
-        child: Center(
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  const Text(
-                    'ID',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  Text(pendingTransaction.id ?? "Unknown")
-                ],
-              ),
-            ],
-          ),
-        ),
+      appBar: AppBar(title: const Text('View Pending Transactions')),
+      body: ListPendingTransactions(
+        onSelect: (PendingTransaction pendingTransaction) {
+          widget.onSelect(pendingTransaction);
+        },
+        listPendingTransactionsController: _listPendingTransactionsController,
       ),
     );
   }

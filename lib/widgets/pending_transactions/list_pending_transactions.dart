@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pagewise/flutter_pagewise.dart';
+import 'package:todd_coin_ui/models/domain/pending_transaction.dart';
 import 'package:todd_coin_ui/utilities/data_helpers.dart';
-
-import '../../models/domain/pending_transaction.dart';
 
 class ListPendingTransactions extends StatefulWidget {
   final ListPendingTransactionsController? listPendingTransactionsController;
@@ -50,7 +49,7 @@ class _ListPendingTransactionsState extends State<ListPendingTransactions> {
         itemBuilder: (context, pendingTransaction, index) {
           return ListTile(
             title: Text(
-              pendingTransaction.id ?? "Unknown",
+              pendingTransaction.id!.substring(0, 8),
               style: const TextStyle(fontSize: 18),
             ),
             onTap: () {
@@ -61,6 +60,10 @@ class _ListPendingTransactionsState extends State<ListPendingTransactions> {
         noItemsFoundBuilder: (context) {
           return const Text('No pending transactions found.');
         },
+        errorBuilder: (context, error) {
+          return Text('Error: $error');
+        },
+        showRetry: false,
         pageLoadController: widget.listPendingTransactionsController != null
             ? widget.listPendingTransactionsController?.pagewiseLoadController
             : PagewiseLoadController(

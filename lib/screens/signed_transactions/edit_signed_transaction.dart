@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:todd_coin_ui/brokers/local_storage_broker.dart';
-import 'package:todd_coin_ui/brokers/pending_transaction_broker.dart';
+import 'package:todd_coin_ui/brokers/signed_transaction_broker.dart';
 import 'package:todd_coin_ui/models/api/token.dart';
-import 'package:todd_coin_ui/models/domain/pending_transaction.dart';
+import 'package:todd_coin_ui/models/domain/signed_transaction.dart';
 import 'package:todd_coin_ui/utilities/app_context.dart';
 
-class EditPendingTransaction extends StatefulWidget {
-  final PendingTransaction? existingPendingTransaction;
-  final void Function(PendingTransaction pendingTransaction) onSubmit;
-  const EditPendingTransaction(
+class EditSignedTransaction extends StatefulWidget {
+  final SignedTransaction? existingSignedTransaction;
+  final void Function(SignedTransaction signedTransaction) onSubmit;
+  const EditSignedTransaction(
       {Key? key,
-      required this.existingPendingTransaction,
+      required this.existingSignedTransaction,
       required this.onSubmit})
       : super(key: key);
 
   @override
-  State<EditPendingTransaction> createState() => _EditPendingTransactionState();
+  State<EditSignedTransaction> createState() => _EditSignedTransactionState();
 }
 
-class _EditPendingTransactionState extends State<EditPendingTransaction> {
+class _EditSignedTransactionState extends State<EditSignedTransaction> {
   final _formKey = GlobalKey<FormState>();
 
   String? _description;
@@ -32,7 +32,7 @@ class _EditPendingTransactionState extends State<EditPendingTransaction> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Edit a Pending Transaction')),
+      appBar: AppBar(title: const Text('Edit a Signed Transaction')),
       body: Form(
         key: _formKey,
         child: Column(
@@ -180,7 +180,7 @@ class _EditPendingTransactionState extends State<EditPendingTransaction> {
                     child: ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          if (widget.existingPendingTransaction != null) {
+                          if (widget.existingSignedTransaction != null) {
                             NavigatorState navigator = Navigator.of(context);
                             ScaffoldMessengerState scaffoldMessenger =
                                 ScaffoldMessenger.of(context);
@@ -188,17 +188,16 @@ class _EditPendingTransactionState extends State<EditPendingTransaction> {
                             String baseUrl =
                                 await LocalStorageBroker.getBaseUrl();
                             Token token = await AppContext.getToken(navigator);
-                            PendingTransaction updatedPendingTransaction =
-                                widget.existingPendingTransaction?.copy();
-                            updatedPendingTransaction.description =
-                                _description;
+                            SignedTransaction updatedSignedTransaction =
+                                widget.existingSignedTransaction?.copy();
+                            updatedSignedTransaction.description = _description;
 
                             try {
-                              await PendingTransactionBroker(Client(), baseUrl)
-                                  .updatePendingTransaction(
-                                      token.access, updatedPendingTransaction);
+                              await SignedTransactionBroker(Client(), baseUrl)
+                                  .updateSignedTransaction(
+                                      token.access, updatedSignedTransaction);
 
-                              widget.onSubmit(updatedPendingTransaction);
+                              widget.onSubmit(updatedSignedTransaction);
                             } catch (error) {
                               scaffoldMessenger.showSnackBar(SnackBar(
                                 content: Text(error.toString()),

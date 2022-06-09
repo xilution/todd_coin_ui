@@ -19,10 +19,13 @@ class ParticipantKeyBroker {
       Participant participant, int pageNumber, int pageSize) async {
     final response = await client.get(
         Uri.parse(
-            '$baseUrl/participants/${participant.id}/participant-keys?page[number]=$pageNumber&page[size]=$pageSize'),
+            '$baseUrl/participants/${participant.id}/keys?page[number]=$pageNumber&page[size]=$pageSize'),
         headers: <String, String>{
           'content-type': 'application/json',
         });
+
+    print(response.statusCode);
+    print(response.body);
 
     if (response.statusCode == 200) {
       FetchManyResponse fetchManyResponse =
@@ -43,10 +46,13 @@ class ParticipantKeyBroker {
       Participant participant, String participantKeyId) async {
     final response = await client.get(
         Uri.parse(
-            '$baseUrl/participants/${participant.id}/participant-keys/$participantKeyId'),
+            '$baseUrl/participants/${participant.id}/keys/$participantKeyId'),
         headers: <String, String>{
           'content-type': 'application/json',
         });
+
+    print(response.statusCode);
+    print(response.body);
 
     if (response.statusCode == 200) {
       FetchOneResponse fetchOneResponse =
@@ -61,13 +67,16 @@ class ParticipantKeyBroker {
   Future<ParticipantKey> createParticipantKey(String accessToken,
       Participant participant, ParticipantKey newParticipantKey) async {
     final response = await client.post(
-      Uri.parse('$baseUrl/participants/${participant.id}/participant-keys'),
+      Uri.parse('$baseUrl/participants/${participant.id}/keys'),
       headers: <String, String>{
         'content-type': 'application/json',
         'authorization': 'Bearer $accessToken',
       },
       body: json.encode(CreateOrUpdateOneRequest(newParticipantKey.toJson())),
     );
+
+    print(response.statusCode);
+    print(response.body);
 
     if (response.statusCode == 201) {
       FetchOneResponse fetchOneResponse =
@@ -83,7 +92,7 @@ class ParticipantKeyBroker {
       ParticipantKey updatedParticipantKey) async {
     final response = await client.patch(
       Uri.parse(
-          '$baseUrl/participants/${participant.id}/participant-keys/${updatedParticipantKey.id}'),
+          '$baseUrl/participants/${participant.id}/keys/${updatedParticipantKey.id}'),
       headers: <String, String>{
         'content-type': 'application/json',
         'authorization': 'Bearer $accessToken',
@@ -91,6 +100,9 @@ class ParticipantKeyBroker {
       body:
           json.encode(CreateOrUpdateOneRequest(updatedParticipantKey.toJson())),
     );
+
+    print(response.statusCode);
+    print(response.body);
 
     if (response.statusCode == 204) {
       return;
