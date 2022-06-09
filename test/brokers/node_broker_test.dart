@@ -163,7 +163,7 @@ void main() {
               }
             }
           }
-          """, 200));
+          """, 201));
 
       Node createdNode = await nodeBroker.createNode(accessToken, newNode);
 
@@ -215,7 +215,7 @@ void main() {
               }
             }
           }
-          """, 200));
+          """, 204));
 
       await nodeBroker.updateNode(accessToken, updatedNode);
     });
