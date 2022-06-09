@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:todd_coin_ui/brokers/local_storage_broker.dart';
@@ -97,15 +95,6 @@ class _SignPendingTransactionState extends State<SignPendingTransaction> {
                     String privateKey =
                         storedParticipantKey?.privateKey as String;
 
-                    print("***** private key *****");
-                    print(privateKey);
-
-                    String publicKey =
-                        storedParticipantKey?.publicKey as String;
-
-                    print("***** public key *****");
-                    print(publicKey);
-
                     SignedTransaction signedTransaction = SignedTransaction(
                       id: widget.pendingTransaction.id,
                       fromParticipant:
@@ -120,14 +109,8 @@ class _SignPendingTransactionState extends State<SignPendingTransaction> {
                       details: widget.pendingTransaction.details,
                     );
 
-                    print("***** signed transaction *****");
-                    print(json.encode(signedTransaction.toJson()));
-
                     String hashHex =
                         calculateTransactionHash(signedTransaction);
-
-                    print("***** hashHex *****");
-                    print(hashHex);
 
                     String signature = getSignature(hashHex, privateKey);
 

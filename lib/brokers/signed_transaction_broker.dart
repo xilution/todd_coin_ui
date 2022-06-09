@@ -23,9 +23,6 @@ class SignedTransactionBroker {
           'content-type': 'application/json',
         });
 
-    print(response.statusCode);
-    print(response.body);
-
     if (response.statusCode == 200) {
       FetchManyResponse fetchManyResponse =
           FetchManyResponse.fromJson(json.decode(response.body));
@@ -49,9 +46,6 @@ class SignedTransactionBroker {
           'content-type': 'application/json',
         });
 
-    print(response.statusCode);
-    print(response.body);
-
     if (response.statusCode == 200) {
       FetchOneResponse fetchOneResponse =
           FetchOneResponse.fromJson(json.decode(response.body));
@@ -64,20 +58,14 @@ class SignedTransactionBroker {
 
   Future<SignedTransaction> createSignedTransaction(
       String accessToken, SignedTransaction newSignedTransaction) async {
-    String encode =
-        json.encode(CreateOrUpdateOneRequest(newSignedTransaction.toJson()));
-    print(encode);
     final response = await client.post(
       Uri.parse('$baseUrl/signed-transactions'),
       headers: <String, String>{
         'content-type': 'application/json',
         'authorization': 'Bearer $accessToken',
       },
-      body: encode,
+      body: json.encode(CreateOrUpdateOneRequest(newSignedTransaction.toJson())),
     );
-
-    print(response.statusCode);
-    print(response.body);
 
     if (response.statusCode == 201) {
       FetchOneResponse fetchOneResponse =
@@ -100,9 +88,6 @@ class SignedTransactionBroker {
       body: json
           .encode(CreateOrUpdateOneRequest(updatedSignedTransaction.toJson())),
     );
-
-    print(response.statusCode);
-    print(response.body);
 
     if (response.statusCode == 204) {
       return;

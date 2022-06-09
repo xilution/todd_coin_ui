@@ -23,9 +23,6 @@ class BlockTransactionBroker {
           'content-type': 'application/json',
         });
 
-    print(response.statusCode);
-    print(response.body);
-
     if (response.statusCode == 200) {
       FetchManyResponse fetchManyResponse =
           FetchManyResponse.fromJson(json.decode(response.body));
@@ -49,9 +46,6 @@ class BlockTransactionBroker {
         headers: <String, String>{
           'content-type': 'application/json',
         });
-
-    print(response.statusCode);
-    print(response.body);
 
     if (response.statusCode == 200) {
       FetchOneResponse fetchOneResponse =

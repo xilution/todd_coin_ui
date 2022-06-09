@@ -18,9 +18,6 @@ class AuthBroker {
           'content-type': 'application/json',
         });
 
-    print(response.statusCode);
-    print(response.body);
-
     if (response.statusCode == 200) {
       return Token.fromJson(json.decode(response.body));
     } else {
@@ -34,9 +31,6 @@ class AuthBroker {
       'content-type': 'application/json',
       'authorization': 'Bearer $accessToken',
     });
-
-    print(response.statusCode);
-    print(response.body);
 
     if (response.statusCode == 200) {
       FetchOneResponse fetchOneResponse =

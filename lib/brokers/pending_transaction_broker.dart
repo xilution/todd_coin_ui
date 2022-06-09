@@ -23,9 +23,6 @@ class PendingTransactionBroker {
           'content-type': 'application/json',
         });
 
-    print(response.statusCode);
-    print(response.body);
-
     if (response.statusCode == 200) {
       FetchManyResponse fetchManyResponse =
           FetchManyResponse.fromJson(json.decode(response.body));
@@ -49,9 +46,6 @@ class PendingTransactionBroker {
           'content-type': 'application/json',
         });
 
-    print(response.statusCode);
-    print(response.body);
-
     if (response.statusCode == 200) {
       FetchOneResponse fetchOneResponse =
           FetchOneResponse.fromJson(json.decode(response.body));
@@ -73,9 +67,6 @@ class PendingTransactionBroker {
       body:
           json.encode(CreateOrUpdateOneRequest(newPendingTransaction.toJson())),
     );
-
-    print(response.statusCode);
-    print(response.body);
 
     if (response.statusCode == 201) {
       FetchOneResponse fetchOneResponse =
@@ -100,9 +91,6 @@ class PendingTransactionBroker {
           .encode(CreateOrUpdateOneRequest(updatedPendingTransaction.toJson())),
     );
 
-    print(response.statusCode);
-    print(response.body);
-
     if (response.statusCode == 204) {
       return;
     } else {
@@ -120,9 +108,6 @@ class PendingTransactionBroker {
         'authorization': 'Bearer $accessToken',
       },
     );
-
-    print(response.statusCode);
-    print(response.body);
 
     if (response.statusCode == 204) {
       return;

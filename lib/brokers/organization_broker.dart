@@ -24,9 +24,6 @@ class OrganizationBroker {
           'content-type': 'application/json',
         });
 
-    print(response.statusCode);
-    print(response.body);
-
     if (response.statusCode == 200) {
       FetchManyResponse fetchManyResponse =
           FetchManyResponse.fromJson(json.decode(response.body));
@@ -51,9 +48,6 @@ class OrganizationBroker {
           'content-type': 'application/json',
         });
 
-    print(response.statusCode);
-    print(response.body);
-
     if (response.statusCode == 200) {
       FetchManyResponse fetchManyResponse =
           FetchManyResponse.fromJson(json.decode(response.body));
@@ -76,9 +70,6 @@ class OrganizationBroker {
           'content-type': 'application/json',
         });
 
-    print(response.statusCode);
-    print(response.body);
-
     if (response.statusCode == 200) {
       FetchOneResponse fetchOneResponse =
           FetchOneResponse.fromJson(json.decode(response.body));
@@ -100,9 +91,6 @@ class OrganizationBroker {
       body: json.encode(CreateOrUpdateOneRequest(newOrganization.toJson())),
     );
 
-    print(response.statusCode);
-    print(response.body);
-
     if (response.statusCode == 201) {
       FetchOneResponse fetchOneResponse =
           FetchOneResponse.fromJson(json.decode(response.body));
@@ -123,9 +111,6 @@ class OrganizationBroker {
       },
       body: json.encode(CreateOrUpdateOneRequest(updatedOrganization.toJson())),
     );
-
-    print(response.statusCode);
-    print(response.body);
 
     if (response.statusCode == 204) {
       return;

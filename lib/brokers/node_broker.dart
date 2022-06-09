@@ -22,9 +22,6 @@ class NodeBroker {
           'content-type': 'application/json',
         });
 
-    print(response.statusCode);
-    print(response.body);
-
     if (response.statusCode == 200) {
       FetchManyResponse fetchManyResponse =
           FetchManyResponse.fromJson(json.decode(response.body));
@@ -44,9 +41,6 @@ class NodeBroker {
         .get(Uri.parse('$baseUrl/nodes/$nodeId'), headers: <String, String>{
       'content-type': 'application/json',
     });
-
-    print(response.statusCode);
-    print(response.body);
 
     if (response.statusCode == 200) {
       FetchOneResponse fetchOneResponse =
@@ -68,9 +62,6 @@ class NodeBroker {
       body: json.encode(CreateOrUpdateOneRequest(newNode.toJson())),
     );
 
-    print(response.statusCode);
-    print(response.body);
-
     if (response.statusCode == 201) {
       FetchOneResponse fetchOneResponse =
           FetchOneResponse.fromJson(json.decode(response.body));
@@ -90,9 +81,6 @@ class NodeBroker {
       },
       body: json.encode(CreateOrUpdateOneRequest(updatedNode.toJson())),
     );
-
-    print(response.statusCode);
-    print(response.body);
 
     if (response.statusCode == 204) {
       return;

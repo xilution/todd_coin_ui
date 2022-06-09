@@ -24,9 +24,6 @@ class ParticipantKeyBroker {
           'content-type': 'application/json',
         });
 
-    print(response.statusCode);
-    print(response.body);
-
     if (response.statusCode == 200) {
       FetchManyResponse fetchManyResponse =
           FetchManyResponse.fromJson(json.decode(response.body));
@@ -51,9 +48,6 @@ class ParticipantKeyBroker {
           'content-type': 'application/json',
         });
 
-    print(response.statusCode);
-    print(response.body);
-
     if (response.statusCode == 200) {
       FetchOneResponse fetchOneResponse =
           FetchOneResponse.fromJson(json.decode(response.body));
@@ -74,9 +68,6 @@ class ParticipantKeyBroker {
       },
       body: json.encode(CreateOrUpdateOneRequest(newParticipantKey.toJson())),
     );
-
-    print(response.statusCode);
-    print(response.body);
 
     if (response.statusCode == 201) {
       FetchOneResponse fetchOneResponse =
@@ -100,9 +91,6 @@ class ParticipantKeyBroker {
       body:
           json.encode(CreateOrUpdateOneRequest(updatedParticipantKey.toJson())),
     );
-
-    print(response.statusCode);
-    print(response.body);
 
     if (response.statusCode == 204) {
       return;

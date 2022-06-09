@@ -21,9 +21,6 @@ class BlockBroker {
           'content-type': 'application/json',
         });
 
-    print(response.statusCode);
-    print(response.body);
-
     if (response.statusCode == 200) {
       FetchManyResponse fetchManyResponse =
           FetchManyResponse.fromJson(json.decode(response.body));
@@ -43,9 +40,6 @@ class BlockBroker {
         .get(Uri.parse('$baseUrl/blocks/$blockId'), headers: <String, String>{
       'content-type': 'application/json',
     });
-
-    print(response.statusCode);
-    print(response.body);
 
     if (response.statusCode == 200) {
       FetchOneResponse fetchOneResponse =
