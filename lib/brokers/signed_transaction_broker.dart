@@ -64,7 +64,8 @@ class SignedTransactionBroker {
         'content-type': 'application/json',
         'authorization': 'Bearer $accessToken',
       },
-      body: json.encode(CreateOrUpdateOneRequest(newSignedTransaction.toJson())),
+      body:
+          json.encode(CreateOrUpdateOneRequest(newSignedTransaction.toJson())),
     );
 
     if (response.statusCode == 201) {

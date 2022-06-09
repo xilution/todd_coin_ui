@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todd_coin_ui/constants.dart';
 import 'package:todd_coin_ui/models/api/token.dart';
 import 'package:todd_coin_ui/models/domain/participant.dart';
 import 'package:todd_coin_ui/models/domain/participant_key.dart';
@@ -17,7 +18,7 @@ class LocalStorageBroker {
 
     String? baseUrl = prefs.getString('baseUrl');
     if (baseUrl == null) {
-      baseUrl = "http://localhost:3000";
+      baseUrl = Constants.baseUrl;
       await prefs.setString('baseUrl', baseUrl);
     }
 

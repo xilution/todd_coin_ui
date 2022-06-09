@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pagewise/flutter_pagewise.dart';
+import 'package:todd_coin_ui/constants.dart';
 import 'package:todd_coin_ui/models/domain/signed_transaction.dart';
 import 'package:todd_coin_ui/utilities/data_helpers.dart';
 
@@ -23,9 +24,9 @@ class ListSignedTransactionsController {
     required this.baseUrl,
   }) {
     pagewiseLoadController = PagewiseLoadController<SignedTransaction>(
-        pageSize: 10,
+        pageSize: Constants.pageSize,
         pageFuture: (pageIndex) async {
-          return loadSignedTransactions(baseUrl, pageIndex, 10);
+          return loadSignedTransactions(baseUrl, pageIndex, Constants.pageSize);
         });
   }
 

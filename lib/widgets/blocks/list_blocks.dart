@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pagewise/flutter_pagewise.dart';
+import 'package:todd_coin_ui/constants.dart';
 import 'package:todd_coin_ui/models/domain/block.dart';
 import 'package:todd_coin_ui/utilities/data_helpers.dart';
 
@@ -23,9 +24,9 @@ class ListBlocksController {
     required this.baseUrl,
   }) {
     pagewiseLoadController = PagewiseLoadController<Block>(
-        pageSize: 10,
+        pageSize: Constants.pageSize,
         pageFuture: (pageIndex) async {
-          var loadBlocks2 = loadBlocks(baseUrl, pageIndex, 10);
+          var loadBlocks2 = loadBlocks(baseUrl, pageIndex, Constants.pageSize);
           return loadBlocks2;
         });
   }

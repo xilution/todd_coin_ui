@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pagewise/flutter_pagewise.dart';
+import 'package:todd_coin_ui/constants.dart';
 import 'package:todd_coin_ui/models/domain/pending_transaction.dart';
 import 'package:todd_coin_ui/utilities/data_helpers.dart';
 
@@ -26,9 +27,10 @@ class ListPendingTransactionsController {
     required this.baseUrl,
   }) {
     pagewiseLoadController = PagewiseLoadController<PendingTransaction>(
-        pageSize: 10,
+        pageSize: Constants.pageSize,
         pageFuture: (pageIndex) async {
-          return loadPendingTransactions(baseUrl, pageIndex, 10);
+          return loadPendingTransactions(
+              baseUrl, pageIndex, Constants.pageSize);
         });
   }
 

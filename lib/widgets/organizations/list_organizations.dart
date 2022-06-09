@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pagewise/flutter_pagewise.dart';
+import 'package:todd_coin_ui/constants.dart';
 import 'package:todd_coin_ui/models/domain/organization.dart';
 import 'package:todd_coin_ui/models/domain/participant.dart';
 import 'package:todd_coin_ui/utilities/data_helpers.dart';
@@ -26,9 +27,10 @@ class ListOrganizationsController {
     this.participant,
   }) {
     pagewiseLoadController = PagewiseLoadController<Organization>(
-        pageSize: 10,
+        pageSize: Constants.pageSize,
         pageFuture: (pageIndex) async {
-          return loadOrganizations(baseUrl, participant, pageIndex, 10);
+          return loadOrganizations(
+              baseUrl, participant, pageIndex, Constants.pageSize);
         });
   }
 

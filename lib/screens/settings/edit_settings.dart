@@ -18,9 +18,9 @@ class _EditSettingsState extends State<EditSettings> {
 
   @override
   void initState() {
-    LocalStorageBroker.getBaseUrl().then((String? baseUrl) {
+    LocalStorageBroker.getBaseUrl().then((String baseUrl) {
       setState(() {
-        _baseUrl = baseUrl ?? "http://localhost:3000";
+        _baseUrl = baseUrl;
       });
     });
 
